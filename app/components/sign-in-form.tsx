@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
 const SignInForm = ({
   handleSignIn,
   error,
@@ -15,47 +20,70 @@ const SignInForm = ({
   password: string;
   setPassword: (password: string) => void;
 }) => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   return (
-    <form className="space-y-4" onSubmit={handleSignIn}>
+    <form className="space-y-5" onSubmit={handleSignIn}>
       {error && (
-        <div className="rounded-md bg-red-50 p-2 text-sm text-red-500 text-center">
+        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500 text-center border border-red-100">
           {error}
         </div>
       )}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-gray-700 ml-1">
+          Email
+        </label>
         <input
           required
           name="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder="name@work-email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-md border px-3 py-2 focus:border-black focus:outline-none text-gray-700"
+          className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <label className="block text-sm font-medium text-gray-700 ml-1">
+            Password
+          </label>
+          <a
+            href="/auth/forgot-password"
+            className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors"
+          >
+            Forgot password?
+          </a>
+        </div>
         <div className="relative">
           <input
             required
             name="password"
-            type="password"
-            placeholder="••••••••"
+            type={showPassword ? "text" : "password"}
+            placeholder="Min. 8 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2 focus:border-black focus:outline-none text-gray-700"
+            className="w-full h-[46px] rounded-lg border border-gray-300 px-4 pr-12 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+          >
+            {showPassword ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
+          </button>
         </div>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-black py-2 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-[46px] rounded-lg bg-indigo-600 text-white font-bold text-[15px] hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-200"
       >
         {loading ? "Signing In..." : "Sign In"}
       </button>

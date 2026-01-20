@@ -3,9 +3,11 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
 const client = new MongoClient(
-  "mongodb://localhost:27018/better-auth-db?replicaSet=rs0&directConnection=true"
+  process.env.MONGODB_URI || "mongodb://localhost:27017/better-auth-db",
 );
 const db = client.db();
+
+import { sendEmail } from "./email";
 
 export const auth = betterAuth({
   plugins: [],
@@ -13,6 +15,23 @@ export const auth = betterAuth({
   experimental: { joins: true },
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 20,
+    sendResetPassword: async ({ user, url, token }) => {
+      console.log(`Attempting to send reset password email to: ${user.email}`);
+      const { success, error } = await sendEmail({
+        to: user.email,
+        subject: "Reset your password",
+        html: `Click the link to reset your password: <a href="${url}">Reset Password</a>`,
+      });
+
+      if (!success) {
+        console.error("Failed to send reset email:", error);
+      } else {
+        console.log("Reset email sent successfully");
+      }
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
