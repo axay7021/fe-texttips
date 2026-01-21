@@ -6,26 +6,40 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { SignUpSchema } from "@/lib/zod";
+import Link from "next/link";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const handleSignUp = async (values: z.infer<typeof SignUpSchema>) => {
     setLoading(true);
     setError(null);
 
     await authClient.signUp.email(
       {
-        email,
-        password,
-        name,
+        email: values.email,
+        password: values.password,
+        name: values.name,
         callbackURL: "/",
       },
       {
@@ -87,7 +101,7 @@ export default function SignUpPage() {
         </div>
 
         <div className="space-y-4">
-          <form className="space-y-5" onSubmit={handleSignUp}>
+          <form className="space-y-5" onSubmit={handleSubmit(handleSignUp)}>
             {error && (
               <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500 text-center border border-red-100">
                 {error}
@@ -98,14 +112,16 @@ export default function SignUpPage() {
                 Name
               </label>
               <input
-                required
-                name="name"
+                {...register("name")}
                 type="text"
                 placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
                 className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
               />
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -113,14 +129,16 @@ export default function SignUpPage() {
                 Email
               </label>
               <input
-                required
-                name="email"
+                {...register("email")}
                 type="email"
                 placeholder="name@work-email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -129,12 +147,9 @@ export default function SignUpPage() {
               </label>
               <div className="relative">
                 <input
-                  required
-                  name="password"
+                  {...register("password")}
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full h-[46px] rounded-lg border border-gray-300 px-4 pr-12 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
                 />
                 <button
@@ -149,6 +164,11 @@ export default function SignUpPage() {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
@@ -195,12 +215,12 @@ export default function SignUpPage() {
 
         <p className="mt-8 text-center text-[14px] text-gray-500">
           Already have an account?{" "}
-          <a
+          <Link
             href="/auth/sign-in"
             className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

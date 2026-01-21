@@ -31,7 +31,11 @@ function ResetPasswordContent() {
     return null; // Don't render anything while redirecting
   }
 
-  const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<z.infer<typeof ResetPasswordSchema>>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
       password: "",
@@ -97,7 +101,7 @@ function ResetPasswordContent() {
           </p>
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {error && (
             <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500 text-center border border-red-100">
               {error}
@@ -114,15 +118,15 @@ function ResetPasswordContent() {
               New Password
             </label>
             <input
-              {...form.register("password")}
+              {...register("password")}
               disabled={loading}
               type="password"
               placeholder="••••••••"
               className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50"
             />
-            {form.formState.errors.password && (
+            {errors.password && (
               <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.password.message}
+                {errors.password.message}
               </p>
             )}
           </div>
@@ -132,15 +136,15 @@ function ResetPasswordContent() {
               Confirm New Password
             </label>
             <input
-              {...form.register("confirmPassword")}
+              {...register("confirmPassword")}
               disabled={loading}
               type="password"
               placeholder="••••••••"
               className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50"
             />
-            {form.formState.errors.confirmPassword && (
+            {errors.confirmPassword && (
               <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.confirmPassword.message}
+                {errors.confirmPassword.message}
               </p>
             )}
           </div>

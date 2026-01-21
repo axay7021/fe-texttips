@@ -13,7 +13,11 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof ForgotPasswordSchema>>({
     resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
       email: "",
@@ -94,7 +98,7 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {error && (
               <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500 text-center border border-red-100">
                 {error}
@@ -106,15 +110,15 @@ export default function ForgotPasswordPage() {
                 Email
               </label>
               <input
-                {...form.register("email")}
+                {...register("email")}
                 disabled={loading}
                 type="email"
                 placeholder="name@work-email.com"
                 className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50"
               />
-              {form.formState.errors.email && (
+              {errors.email && (
                 <p className="mt-1 text-xs text-red-500">
-                  {form.formState.errors.email.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>

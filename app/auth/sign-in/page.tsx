@@ -5,24 +5,39 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import SignInForm from "@/app/components/sign-in-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { SignInSchema } from "@/lib/zod";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 export default function SignInPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof SignInSchema>>({
+    resolver: zodResolver(SignInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof SignInSchema>) => {
     setLoading(true);
     setError(null);
 
     await authClient.signIn.email(
       {
-        email,
-        password,
+        email: values.email,
+        password: values.password,
         callbackURL: "/",
       },
       {
@@ -76,15 +91,78 @@ export default function SignInPage() {
         </div>
 
         <div className="space-y-4">
-          <SignInForm
-            handleSignIn={handleSignIn}
-            error={error}
-            loading={loading}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-          />
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+            {error && (
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-500 text-center border border-red-100">
+                {error}
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 ml-1">
+                Email
+              </label>
+              <input
+                {...register("email")}
+                disabled={loading}
+                type="email"
+                placeholder="name@work-email.com"
+                className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700 ml-1">
+                  Password
+                </label>
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  {...register("password")}
+                  disabled={loading}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 8 characters"
+                  className="w-full h-[46px] rounded-lg border border-gray-300 px-4 pr-12 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[46px] rounded-lg bg-indigo-600 text-white font-bold text-[15px] hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-200"
+            >
+              {loading ? "Signing In..." : "Sign In"}
+            </button>
+          </form>
+
           <div className="relative flex items-center py-2">
             <div className="flex-grow border-t border-gray-200"></div>
             <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">or</span>
@@ -126,12 +204,12 @@ export default function SignInPage() {
 
         <p className="mt-8 text-center text-[14px] text-gray-500">
           Don't have an account?{" "}
-          <a
+          <Link
             href="/auth/sign-up"
             className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
