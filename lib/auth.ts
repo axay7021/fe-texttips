@@ -8,6 +8,10 @@ const client = new MongoClient(
 const db = client.db();
 
 import { sendEmail } from "./email";
+import Plan from "@/app/models/plan/plan.model";
+import dbConnect from "./mongodb";
+import Subscription from "@/app/models/subscription/subscription.model";
+import { IPlan } from "@/app/models/plan/plan.types";
 
 export const auth = betterAuth({
   plugins: [],
@@ -53,4 +57,39 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+  user: {
+    modelName: "users",
+  },
+  session: {
+    modelName: "session",
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user, context) => {
+          await dbConnect();
+
+          const freePlan = (await Plan.findOne({
+            name: "Free",
+          })) as IPlan | null;
+          if (!freePlan) {
+            throw new Error("Free plan not found");
+          }
+
+          const startDate = new Date();
+          const endDate = new Date();
+          endDate.setMonth(startDate.getMonth() + 1);
+
+          await Subscription.create({
+            user: user.id,
+            plan: freePlan._id,
+            stripeCustomerId: user.id,
+            isActive: true,
+            startDate,
+            endDate,
+          });
+        },
+      },
+    },
+  },
 });
