@@ -3,7 +3,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/hero-section";
-import { BackgroundAnimation } from "@/components/background-animation";
+import AboutSection from "@/components/about-section";
+import PricingSection from "@/components/pricing-section";
+
+import FeatureSection from "@/components/feature-section";
+import FaqSection from "@/components/faq-section";
+import Footer from "@/components/footer";
 
 export default async function LandingPage() {
   const session = await auth.api.getSession({
@@ -24,11 +29,17 @@ export default async function LandingPage() {
     >
       {/* Navbar */}
       <Navbar session={session} />
-      <BackgroundAnimation />
 
       <main className="relative z-10">
         <HeroSection />
+        <AboutSection />
+        <PricingSection />
+        <FeatureSection />
+        <FaqSection />
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
+      model: "gemini-2.5-flash",
     });
     console.log(model);
     const prompt = `You are a text rewriting assistant. Rewrite the following text based on the tone requested.

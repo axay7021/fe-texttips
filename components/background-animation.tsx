@@ -18,7 +18,7 @@ export function BackgroundAnimation() {
           return (
             <div
               key={i}
-              className="relative w-[1px] h-full bg-[#f0f7ff]" // Very faint blue line
+              className="relative w-px h-full bg-[#f0f7ff]" // Very faint blue line
             >
               {/* Animated beams moving down */}
               {Array.from({ length: 2 }).map((_, j) => (
@@ -35,7 +35,7 @@ export function BackgroundAnimation() {
                     ease: "linear",
                     delay: delayOffset + j * (duration / 2), // Perfectly spaced delays (halfway point)
                   }}
-                  className="absolute w-[3px] h-[10vh] -left-[1px] bg-[#c9e4ff]"
+                  className="absolute w-[3px] h-[10vh] -left-px bg-[#c9e4ff]"
                 />
               ))}
             </div>

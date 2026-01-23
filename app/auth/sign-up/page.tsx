@@ -75,21 +75,13 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f7ff] flex items-center justify-center relative overflow-hidden px-4">
-      {/* Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(#4f46e5 1px, transparent 1px), linear-gradient(90deg, #4f46e5 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      ></div>
-
-      {/* Hero Background Gradient Overlay */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-200/50 blur-[120px] rounded-full -mr-64 -mt-32"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100/50 blur-[120px] rounded-full -ml-64 -mb-32"></div>
-
+    <div
+      className="min-h-screen flex items-center justify-center relative overflow-hidden px-4"
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(58, 130, 246, 0.08) 0%, rgba(255, 255, 255, 1) 100%)",
+      }}
+    >
       <div className="w-full max-w-[440px] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10 relative z-10 border border-gray-100">
         <div className="text-center mb-8">
           <h1 className="text-[32px] font-bold text-[#333] mb-2 tracking-tight">
@@ -115,7 +107,7 @@ export default function SignUpPage() {
                 {...register("name")}
                 type="text"
                 placeholder="John Doe"
-                className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-[#3a82f6]/20 focus:border-[#3a82f6] outline-none transition-all text-gray-800 placeholder:text-gray-400"
               />
               {errors.name && (
                 <p className="mt-1 text-xs text-red-500">
@@ -132,7 +124,7 @@ export default function SignUpPage() {
                 {...register("email")}
                 type="email"
                 placeholder="name@work-email.com"
-                className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                className="w-full h-[46px] rounded-lg border border-gray-300 px-4 focus:ring-2 focus:ring-[#3a82f6]/20 focus:border-[#3a82f6] outline-none transition-all text-gray-800 placeholder:text-gray-400"
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-500">
@@ -150,7 +142,7 @@ export default function SignUpPage() {
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
-                  className="w-full h-[46px] rounded-lg border border-gray-300 px-4 pr-12 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                  className="w-full h-[46px] rounded-lg border border-gray-300 px-4 pr-12 focus:ring-2 focus:ring-[#3a82f6]/20 focus:border-[#3a82f6] outline-none transition-all text-gray-800 placeholder:text-gray-400"
                 />
                 <button
                   type="button"
@@ -174,7 +166,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-[46px] rounded-lg bg-indigo-600 text-white font-bold text-[15px] hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-200"
+              className="w-full h-[46px] rounded-lg bg-[#3a82f6] text-white font-bold text-[15px] hover:bg-[#3272d9] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-blue-200"
             >
               {loading ? "Creating Account..." : "Sign Up"}
             </button>
@@ -217,7 +209,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <Link
             href="/auth/sign-in"
-            className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+            className="font-semibold text-[#3a82f6] hover:text-[#3272d9] transition-colors"
           >
             Sign in
           </Link>

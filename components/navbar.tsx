@@ -4,7 +4,7 @@ import Link from "next/link";
 import { UserNav } from "./user-nav";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
@@ -13,11 +13,64 @@ interface NavbarProps {
 
 export function Navbar({ session }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   return (
     <nav className="fixed w-full top-2 z-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 bg-white/80 backdrop-blur-md rounded-2xl lg:bg-transparent lg:backdrop-blur-none px-4 lg:px-0 shadow-sm lg:shadow-none border lg:border-none border-gray-100/50">
+        <div
+          className={cn(
+            "flex items-center justify-between h-16 rounded-2xl px-4 lg:px-0 transition-all duration-300",
+            isScrolled
+              ? "bg-white/30 backdrop-blur-md shadow-sm border border-gray-100/50 lg:px-6" // Scrolled state
+              : "bg-white/30 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none shadow-sm lg:shadow-none border border-gray-100/50 lg:border-none", // Initial state
+          )}
+        >
           <NavbarBrand />
 
           {/* Desktop Links */}
@@ -31,6 +84,7 @@ export function Navbar({ session }: NavbarProps) {
           {/* Mobile Menu Button */}
           <div className="lg:hidden">
             <button
+              ref={buttonRef}
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
             >
@@ -42,7 +96,10 @@ export function Navbar({ session }: NavbarProps) {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 lg:hidden flex flex-col gap-6 animate-in slide-in-from-top-5 duration-200">
+        <div
+          ref={menuRef}
+          className="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 lg:hidden flex flex-col gap-6 animate-in slide-in-from-top-5 duration-200"
+        >
           <div className="flex flex-col gap-4">
             <Link
               href="/"
@@ -113,7 +170,7 @@ function NavbarBrand() {
   );
 }
 
-function NavbarLinks({ className }: { className?: string }) {
+export function NavbarLinks({ className }: { className?: string }) {
   const links = [
     { name: "Home", href: "/" },
     { name: "Extension", href: "#" },

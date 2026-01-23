@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { TextEnhancerUI } from "./text-enhancer-ui";
 import { FiArrowUpRight } from "react-icons/fi";
 import { HeroBadges } from "./hero-badges";
+import { BackgroundAnimation } from "./background-animation";
 
 export function HeroSection() {
   return (
     <section className="relative pt-30 px-4 text-center z-10 min-h-screen h-auto flex flex-col justify-center items-center">
       <HeroBadges />
+      <BackgroundAnimation />
       <div className="w-full mx-auto h-full flex flex-col justify-center items-center relative z-10">
         <div className="max-w-[806px] mx-auto flex flex-col items-center space-y-[18px]">
           <h2 className="text-brand-blue font-normal tracking-wide uppercase text-xs md:text-[26px]">

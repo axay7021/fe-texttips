@@ -4,7 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --shadow-soft:
+    0px 16px 16px -8px rgba(12, 12, 13, 0.1),
+    0px 4px 4px -4px rgba(12, 12, 13, 0.05);
   --max-width-8xl: 1380px;
+  --breakpoint-xl2: 1056px;
   --color-paragraph: var(--paragraph);
   --color-heading: var(--heading);
   --color-brand-blue: var(--brand-blue);
@@ -132,4 +136,8 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.pattern-bg {
+  /* background-image: url("../public/pencile-pattern.png"); */
 }
