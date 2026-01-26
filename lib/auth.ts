@@ -56,6 +56,7 @@ export const auth = betterAuth({
   },
   database: mongodbAdapter(db, {
     client,
+    transaction: false,
   }),
   user: {
     modelName: "users",

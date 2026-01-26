@@ -7,7 +7,7 @@ import chromeIcon from "@/public/chrome-icon.png";
 
 const FeatureSection = () => {
   return (
-    <section className="py-10 pb-30 px-4 md:px-8 bg-white">
+    <section id="extension" className="py-10 pb-30 px-4 md:px-8 bg-white">
       <div
         className="max-w-[1119px] mx-auto p-6 md:p-[40px] rounded-[20px] flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4"
         style={{

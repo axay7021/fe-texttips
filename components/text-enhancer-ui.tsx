@@ -31,6 +31,15 @@ export function TextEnhancerUI() {
           </Button>
         </div>
       </div>
+
+      {/* Disclaimer */}
+      <div className="text-center mt-4">
+        <p className="text-gray-500 text-sm font-medium opacity-80">
+          ✨ You get{" "}
+          <span className="text-brand-blue font-bold">3 free rewrites</span>. No
+          credit card required.
+        </p>
+      </div>
     </div>
   );
 }

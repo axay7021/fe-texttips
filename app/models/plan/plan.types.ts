@@ -1,6 +1,7 @@
 import { Document } from "mongoose";
 
-export interface IPlan extends Document {
+export interface IPlan {
+  _id: string;
   name: string;
   originalPriceUsd: number;
   priceUsd: number;
@@ -14,3 +15,5 @@ export interface IPlan extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IPlanDocument extends Omit<IPlan, "_id">, Document {}

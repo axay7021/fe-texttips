@@ -4,7 +4,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname.startsWith("/auth");
   const isApiRoute = pathname.startsWith("/api");
-  const isPublicRoute = pathname === "/";
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/terms-of-service";
 
   // Handle CORS preflight requests for API routes
   if (isApiRoute && request.method === "OPTIONS") {

@@ -9,13 +9,16 @@ import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
   session: any;
+  hideNavigation?: boolean;
+  subscription?: any;
 }
 
-export function Navbar({ session }: NavbarProps) {
+export function Navbar({ session, hideNavigation, subscription }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  console.log("subscription", subscription);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,11 +77,11 @@ export function Navbar({ session }: NavbarProps) {
           <NavbarBrand />
 
           {/* Desktop Links */}
-          <NavbarLinks className="hidden lg:flex" />
+          {!hideNavigation && <NavbarLinks className="hidden lg:flex" />}
 
           {/* Desktop Actions */}
           <div className="hidden lg:block">
-            <NavbarActions session={session} />
+            <NavbarActions session={session} subscription={subscription} />
           </div>
 
           {/* Mobile Menu Button */}
@@ -100,36 +103,38 @@ export function Navbar({ session }: NavbarProps) {
           ref={menuRef}
           className="absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 lg:hidden flex flex-col gap-6 animate-in slide-in-from-top-5 duration-200"
         >
-          <div className="flex flex-col gap-4">
-            <Link
-              href="/"
-              onClick={() => setIsOpen(false)}
-              className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="#"
-              onClick={() => setIsOpen(false)}
-              className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
-            >
-              Extension
-            </Link>
-            <Link
-              href="#"
-              onClick={() => setIsOpen(false)}
-              className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
-            >
-              Pricing
-            </Link>
-          </div>
+          {!hideNavigation && (
+            <div className="flex flex-col gap-4">
+              <Link
+                href="/#home"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                href="/#extension"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
+              >
+                Extension
+              </Link>
+              <Link
+                href="/#pricing"
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors"
+              >
+                Pricing
+              </Link>
+            </div>
+          )}
 
           <div className="h-px bg-gray-100 w-full" />
 
           <div className="flex flex-col gap-3">
             {session ? (
               <div className="flex justify-start">
-                <UserNav user={session.user} />
+                <UserNav user={session.user} subscription={subscription} />
               </div>
             ) : (
               <>
@@ -163,7 +168,7 @@ function NavbarBrand() {
           <span className="text-white font-bold text-lg">T</span>
         </div>
         <span className="text-2xl font-bold text-[#2A2A2A] tracking-tight group-hover:text-blue-600 transition-colors">
-          TextEnhancer
+          TextTips
         </span>
       </Link>
     </div>
@@ -172,9 +177,9 @@ function NavbarBrand() {
 
 export function NavbarLinks({ className }: { className?: string }) {
   const links = [
-    { name: "Home", href: "/" },
-    { name: "Extension", href: "#" },
-    { name: "Pricing", href: "#" },
+    { name: "Home", href: "/#home" },
+    { name: "Extension", href: "/#extension" },
+    { name: "Pricing", href: "/#pricing" },
   ];
 
   return (
@@ -194,11 +199,17 @@ export function NavbarLinks({ className }: { className?: string }) {
   );
 }
 
-function NavbarActions({ session }: { session: any }) {
+function NavbarActions({
+  session,
+  subscription,
+}: {
+  session: any;
+  subscription?: any;
+}) {
   return (
     <div className="flex items-center gap-5">
       {session ? (
-        <UserNav user={session.user} />
+        <UserNav user={session.user} subscription={subscription} />
       ) : (
         <>
           <Link href="/auth/sign-in">
