@@ -9,29 +9,29 @@ import {
 
 const faqs = [
   {
-    question: "Do you offer refunds?",
+    question: "What is TextTips?",
     answer:
-      "We do not offer refunds but you can cancel your subscription before the next billing cycle or before your trial ends by navigating to your account page and clicking on 'Manage Plan'.",
+      "TextTips is an AI-powered writing assistant that helps you rewrite and enhance your text. Whether you need to sound more professional, friendly, or concise, TextTips provides instant suggestions to elevate your communication.",
   },
   {
-    question: "What forms of payment do you accept?",
+    question: "Is it free to use?",
     answer:
-      "We accept all major credit cards (Visa, Mastercard, American Express) and PayPal for secure transactions.",
+      "Yes! You can use TextTips for free with a limited number of daily rewrites. For unlimited access and advanced features, you can upgrade to our Pro plan.",
   },
   {
-    question: "How do I contact the support team?",
+    question: "How does the AI enhancement work?",
     answer:
-      "You can reach our support team 24/7 via the 'Support' link in your dashboard or by emailing support@openup.com.",
+      "We use advanced AI models (like Google Gemini) to analyze your input and generate multiple rewritten versions in different tones (Professional, Friendly, Concise, Polished, Clear, Confident).",
   },
   {
-    question: "How long does the free trial last?",
+    question: "What is included in the Pro plan?",
     answer:
-      "Our free trial lasts for 3 days, giving you full access to test our premium features before committing.",
+      "The Pro plan unlocks unlimited daily rewrites, access to all premium tones, faster processing speeds, and priority support.",
   },
   {
-    question: "Will I be charged during the free trial period?",
+    question: "Can I cancel my subscription anytime?",
     answer:
-      "No, you will not be charged during the free trial period. You will only be charged if you continue your subscription after the trial ends.",
+      "Absolutely. You can manage or cancel your subscription at any time directly from your dashboard settings. Your access will continue until the end of the current billing cycle.",
   },
 ];
 
@@ -41,10 +41,10 @@ const FaqSection = () => {
       <div className="max-w-[1320px] mx-auto">
         <div className="text-center mb-[30px] space-y-[40px]">
           <span className="text-brand-blue font-semibold text-[22px] uppercase tracking-wider">
-            Faq
+            FAQ
           </span>
           <h2 className="text-[20px] md:text-[36px] font-bold text-white leading-tight">
-            Questions About our OpenUp?
+            Questions About TextTips?
             <br />
             We have Answers!
           </h2>

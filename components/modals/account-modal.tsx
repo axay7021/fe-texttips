@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
 import { ProfileTab } from "./account-modal-ui/ProfileTab";
 import { PlanTab } from "./account-modal-ui/PlanTab";
 import { Sidebar } from "./account-modal-ui/Sidebar";
@@ -25,6 +26,11 @@ export function AccountModal({
   subscription,
 }: AccountModalProps) {
   const [activeTab, setActiveTab] = useState("profile");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset tab when modal opens
   useEffect(() => {
@@ -39,11 +45,11 @@ export function AccountModal({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   console.log(subscription);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -96,7 +102,11 @@ export function AccountModal({
                       )}
 
                       {activeTab === "plan" && (
-                        <PlanTab key="plan" subscription={subscription} />
+                        <PlanTab
+                          key="plan"
+                          subscription={subscription}
+                          onClose={onClose}
+                        />
                       )}
                     </AnimatePresence>
                   </div>
@@ -106,6 +116,7 @@ export function AccountModal({
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

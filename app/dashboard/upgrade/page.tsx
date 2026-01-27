@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import PricingSection from "@/components/pricing-section";
 import { getPlans, getUserSubscription } from "@/app/api/plans/service";
+import FaqSection from "@/components/faq-section";
+import Footer from "@/components/footer";
 
 export default async function UpgradePage() {
   const session = await auth.api.getSession({
@@ -47,6 +49,9 @@ export default async function UpgradePage() {
           />
         </div>
       </main>
+
+      <FaqSection />
+      <Footer />
     </div>
   );
 }

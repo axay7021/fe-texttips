@@ -6,9 +6,10 @@ import { motion } from "framer-motion";
 
 interface PlanTabProps {
   subscription?: any;
+  onClose?: () => void;
 }
 
-export function PlanTab({ subscription }: PlanTabProps) {
+export function PlanTab({ subscription, onClose }: PlanTabProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -40,8 +41,8 @@ export function PlanTab({ subscription }: PlanTabProps) {
         </div>
 
         <div className="flex gap-4">
-          <Link href="/dashboard/upgrade" className="w-full">
-            <Button className="w-full bg-brand-blue hover:bg-blue-600 text-white shadow-lg shadow-blue-200/50 hover:shadow-blue-300/50 transition-all rounded-xl h-10 px-6">
+          <Link href="/dashboard/upgrade" className="w-full" onClick={onClose}>
+            <Button className="w-full bg-brand-blue cursor-pointer hover:bg-blue-600 text-white shadow-lg shadow-blue-200/50 hover:shadow-blue-300/50 transition-all rounded-xl h-10 px-6">
               <IoSparkles className="w-4 h-4 mr-2" />
               Upgrade
             </Button>

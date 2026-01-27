@@ -8,6 +8,7 @@ import pricingPencilePattern from "@/public/pricing-pencile-pattern.png";
 import Image from "next/image";
 import { IPlan } from "@/app/models/plan/plan.types";
 import { useRouter, useSearchParams } from "next/navigation";
+import Confetti from "react-confetti-boom";
 
 const PricingSection = ({
   plans,
@@ -71,6 +72,13 @@ const PricingSection = ({
       className="relative pb-10 md:pb-20 px-4 overflow-hidden bg-white"
       id="pricing"
     >
+      {/* Confetti */}
+      {success && (
+        <div className="flex w-full justify-center fixed top-0 left-0 w-full h-full">
+          <Confetti mode="boom" particleCount={50} shapeSize={20} />
+        </div>
+      )}
+
       {/* Background Pattern - Placeholder as requested */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></div>
 

@@ -49,7 +49,10 @@ export function UserNav({ user, subscription }: UserNavProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <Button
+            variant="ghost"
+            className="relative h-10 w-10 rounded-full cursor-pointer"
+          >
             <Avatar className="h-10 w-10 border border-gray-200">
               <AvatarImage src={user.image || ""} alt={user.name} />
               <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">

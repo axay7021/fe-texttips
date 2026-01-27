@@ -1,79 +1,86 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { streamText } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+
+  const google = createGoogleGenerativeAI({
+    apiKey: apiKey,
+  });
+
   try {
-    // Verify authentication
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const body = await req.json();
+    console.log("Enhance API Request Body:", body);
 
-    if (!session) {
-      return new Response("Unauthorized", { status: 401 });
+    // Check if key is present to avoid silent failures
+    if (!apiKey) {
+      console.error("GOOGLE_GENERATIVE_AI_API_KEY is missing in process.env");
+      return new Response(
+        "Missing Google API Key. Please add GOOGLE_GENERATIVE_AI_API_KEY to your .env file.",
+        { status: 500 },
+      );
     }
 
-    const { text, tone } = await request.json();
+    const { prompt, text } = body;
+    const userPrompt = prompt || text;
 
-    if (!text) {
-      return new Response("Missing text", { status: 400 });
+    if (!userPrompt || typeof userPrompt !== "string" || !userPrompt.trim()) {
+      return new Response("Missing prompt", { status: 400 });
     }
 
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    if (!GEMINI_API_KEY) {
-      return new Response("API key not configured", { status: 500 });
-    }
+    const systemPrompt = `You are a text enhancement expert. Your task is to rewrite the user's text in 6 distinct styles. You must provide all 6 versions in a single response.
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
-    console.log(model);
-    const prompt = `You are a text rewriting assistant. Rewrite the following text based on the tone requested.
+    Styles:
+    1. Professional
+    2. Friendly
+    3. Concise
+    4. Polished
+    5. Clear
+    6. Confident
 
-Rules:
-- Return ONLY the rewritten text, nothing else
-- No explanations, no formatting, no quotation marks
-- Just the rewritten sentence
-- If informal, make it ${tone || "professional"}
-- If already formal, keep it ${tone || "professional"}
+    Formatting Rules:
+    - Use labels followed by a colon (e.g. Professional:)
+    - ALWAYS put the rewritten text on a NEW LINE after the label.
+    - Do NOT use markdown bold (asterisks) for the labels.
+    - Separate each version with a blank line.
+    - Do not include any preamble or extra chatter.
+    
+    Example Output:
+    Professional:
+    I hope this email finds you well.
 
-Original text: "${text}"
+    Friendly:
+    Hey there! Hope you're doing great.
+    
+    (etc)`;
 
-Rewritten text:`;
-
-    const result = await model.generateContentStream(prompt);
-
-    // Create a readable stream for SSE
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of result.stream) {
-            const chunkText = chunk.text();
-            const data = `data: ${JSON.stringify({ content: chunkText })}\n\n`;
-            controller.enqueue(encoder.encode(data));
-          }
-          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-          controller.close();
-        } catch (error) {
-          console.error("AI Error:", error);
-          const errorData = `data: ${JSON.stringify({ error: "AI processing failed. Check API Key." })}\n\n`;
-          controller.enqueue(encoder.encode(errorData));
-          controller.close();
-        }
+    const result = streamText({
+      model: google("gemini-2.5-flash-lite"),
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      onError: ({ error }) => {
+        console.error("Stream Error:", error);
       },
+      onFinish: ({ text }) => console.log("Stream Finished:", text),
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
+    result.usage.then((usages) => {
+      console.log({
+        inputTokens: usages.inputTokens,
+        outputTokens: usages.outputTokens,
+        totalTokens: usages.totalTokens,
+      });
     });
-  } catch (error) {
+
+    return result.toUIMessageStreamResponse();
+  } catch (error: any) {
     console.error("Enhance Error:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    const errorMessage = error.message || "Internal Server Error";
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

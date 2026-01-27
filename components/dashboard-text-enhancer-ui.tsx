@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { IoSparkles } from "react-icons/io5";
-import { X, Infinity, Zap } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useCompletion } from "@ai-sdk/react";
+import { EnhancerInput } from "./enhancer/enhancer-input";
+import { EnhancerResults } from "./enhancer/enhancer-results";
+import { EnhancedVersion } from "./enhancer/types";
+import { parseEnhancementResult } from "./enhancer/utils";
 
 interface DashboardTextEnhancerUIProps {
   isPro?: boolean;
@@ -12,111 +14,76 @@ interface DashboardTextEnhancerUIProps {
 export function DashboardTextEnhancerUI({
   isPro = false,
 }: DashboardTextEnhancerUIProps) {
-  const [text, setText] = useState("");
   const [showTip, setShowTip] = useState(true);
   const [usageCount, setUsageCount] = useState(3);
   const maxUsage = 3;
   const maxLength = 2000;
 
+  const [parsedVersions, setParsedVersions] = useState<EnhancedVersion[]>([]);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const { input, setInput, completion, isLoading, complete } = useCompletion({
+    api: "/api/enhance",
+  });
+
+  // Real-time parsing of the stream
+  useEffect(() => {
+    if (completion) {
+      setParsedVersions(parseEnhancementResult(completion));
+    } else {
+      setParsedVersions([]);
+    }
+  }, [completion]);
+
   const handleRewrite = () => {
-    if (!isPro && usageCount > 0) {
+    if (!input.trim()) return;
+
+    if (!isPro) {
+      if (usageCount <= 0) return;
       setUsageCount((prev) => prev - 1);
     }
-    // Perform rewrites logic here...
+
+    setParsedVersions([]);
+    complete(input);
+  };
+
+  const copyToClipboard = async (content: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy", err);
+    }
+  };
+
+  const replaceText = (newText: string) => {
+    setInput(newText);
   };
 
   return (
-    <div className="w-full mx-auto relative z-20">
-      {/* Free Rewrites Tooltip/Badge */}
+    <div className="w-full mx-auto relative z-20 flex flex-col gap-6">
+      <EnhancerInput
+        text={input}
+        setText={setInput}
+        handleRewrite={handleRewrite}
+        isLoading={isLoading}
+        isPro={isPro}
+        usageCount={usageCount}
+        showTip={showTip}
+        setShowTip={setShowTip}
+        maxLength={maxLength}
+        maxUsage={maxUsage}
+      />
 
-      <div className="bg-white rounded-[24px] shadow-[0_16px_16px_-8px_#CCE5FF] border border-gray-100 p-6 md:p-8 flex flex-col relative min-h-[400px]">
-        {/* Info Banner - Only for Free Users */}
-        {showTip && !isPro && (
-          <div className="mb-4 flex items-start md:items-center justify-between bg-[#F8FAFC] border border-gray-100 px-4 py-3 rounded-xl text-sm text-gray-600 animate-in fade-in slide-in-from-top-1 duration-300">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">✨</span>
-              <span>
-                You get{" "}
-                <span className="font-semibold text-[#333]">
-                  {usageCount} free rewrites
-                </span>
-                . No credit card required.
-              </span>
-            </div>
-            <button
-              onClick={() => setShowTip(false)}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg ml-2"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        )}
-
-        {/* Text Area */}
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Add your text here..."
-          maxLength={maxLength}
-          className="w-full flex-1 resize-none border-none outline-none text-[18px] text-[#1a1a1a] placeholder:text-gray-300 bg-transparent font-normal leading-relaxed"
-          spellCheck={false}
-        />
-
-        {/* Footer Area */}
-        <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4 border-t border-gray-50 pt-4 md:border-none md:pt-0">
-          {/* Left Side: Char Count + Usage Badge */}
-          <div className="flex items-center gap-6 w-full md:w-auto">
-            <span className="text-gray-300 text-sm font-medium">
-              {text.length} / {maxLength}
-            </span>
-
-            {isPro ? (
-              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full text-brand-blue border border-blue-100">
-                <Zap className="w-3.5 h-3.5 fill-current" />
-                <span className="text-xs font-bold uppercase tracking-wide">
-                  Pro Active
-                </span>
-                <span className="text-gray-300 mx-1">|</span>
-                <Infinity className="w-3.5 h-3.5" />
-                <span className="text-xs font-semibold">Unlimited</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 bg-[#F0F7FF] px-3 py-1.5 rounded-full">
-                <div className="flex gap-1">
-                  {[...Array(maxUsage)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                        i < usageCount ? "bg-brand-blue" : "bg-blue-200/40"
-                      }`}
-                    ></div>
-                  ))}
-                </div>
-                <span className="text-brand-blue text-xs font-bold ml-1">
-                  {usageCount} / {maxUsage} free
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Right Side: Rewrite Button */}
-          <Button
-            onClick={handleRewrite}
-            disabled={(!isPro && usageCount === 0) || text.length === 0}
-            className={`rounded-xl w-full md:w-auto py-6 px-8 font-medium shadow-lg transition-all text-lg cursor-pointer flex items-center justify-center gap-2
-              ${
-                !isPro && usageCount === 0
-                  ? "bg-gray-100 text-gray-400 shadow-none cursor-not-allowed"
-                  : "bg-brand-blue hover:bg-blue-600 text-white shadow-blue-200/50 hover:shadow-blue-300/50 hover:-translate-y-0.5"
-              }`}
-          >
-            <IoSparkles className="w-5 h-5" />
-            <span>
-              {!isPro && usageCount === 0 ? "Limit Reached" : "Rewrite"}
-            </span>
-          </Button>
-        </div>
-      </div>
+      <EnhancerResults
+        parsedVersions={parsedVersions}
+        isLoading={isLoading}
+        copiedIndex={copiedIndex}
+        copyToClipboard={copyToClipboard}
+        replaceText={replaceText}
+        completion={completion}
+      />
     </div>
   );
 }
