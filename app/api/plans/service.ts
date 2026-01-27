@@ -4,6 +4,7 @@ import dbConnect from "@/lib/mongodb";
 import Plan from "@/app/models/plan/plan.model";
 import Subscription from "@/app/models/subscription/subscription.model";
 import { auth } from "@/lib/auth";
+import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 
 // 1. Fetch Plans (Public)
@@ -25,15 +26,6 @@ export async function getPlans() {
     console.error("Error fetching plans from DB:", error);
   }
 
-  // Fallback to JSON if DB is empty or fails
-  const plansData = await import("@/app/models/plan/plan.json");
-  const plans = plansData.default || plansData;
-
-  // Add fake _ids and ensure structure matches what UI expects
-  return plans.map((plan: any, index: number) => ({
-    ...plan,
-    _id: `plan_${index}`,
-  }));
 }
 
 // 2. Fetch User's Subscription (Protected)
@@ -61,6 +53,24 @@ export async function getUserSubscription() {
     return null;
   }
 
+  // Fetch upcoming invoice from Stripe to get next billing details
+  let nextBilling = null;
+  if (subscription.isActive && !subscription.cancelAtPeriodEnd && subscription.stripeCustomerId) {
+    try {
+      const upcomingInvoice = await stripe.invoices.createPreview({
+        customer: subscription.stripeCustomerId,
+        subscription: subscription.stripeSubscriptionId,
+      });
+      nextBilling = {
+        amount: upcomingInvoice.amount_due / 100,
+        date: upcomingInvoice.next_payment_attempt ? new Date(upcomingInvoice.next_payment_attempt * 1000).toISOString() : null,
+      };
+    } catch (error) {
+      console.log("Could not fetch upcoming invoice (might be cancelled or null):", error);
+    }
+  }
+
+
   // Serialize the nested data structures
   return {
     ...subscription,
@@ -75,5 +85,7 @@ export async function getUserSubscription() {
     },
     startDate: subscription.startDate.toISOString(),
     endDate: subscription.endDate.toISOString(),
+    cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+    nextBilling
   };
 }

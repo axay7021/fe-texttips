@@ -14,7 +14,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, User, Sparkles } from "lucide-react";
+import { LogOut, User, Sparkles, CreditCard } from "lucide-react";
 
 interface UserNavProps {
   user: {
@@ -88,6 +88,15 @@ export function UserNav({ user, subscription }: UserNavProps) {
               >
                 <Sparkles className="mr-2 h-4 w-4 text-brand-blue" />
                 <span>Upgrade</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link
+                href="/dashboard/payment-history"
+                className="flex items-center w-full"
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Payment History</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

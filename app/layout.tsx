@@ -47,6 +47,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -58,6 +60,7 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} font-space-grotesk antialiased`}
       >
         {children}
+        <Toaster position="top-right" richColors />
         <ScrollToTop />
       </body>
     </html>

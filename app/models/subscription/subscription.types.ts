@@ -4,6 +4,7 @@ export interface ISubscription extends Document {
   user: Schema.Types.ObjectId;
   plan: Schema.Types.ObjectId;
   stripeCustomerId: string;
+  stripeSubscriptionId?: string;
   isActive: boolean;
   startDate: Date;
   endDate: Date;

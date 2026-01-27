@@ -18,7 +18,6 @@ export function Navbar({ session, hideNavigation, subscription }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  console.log("subscription", subscription);
 
   useEffect(() => {
     const handleScroll = () => {

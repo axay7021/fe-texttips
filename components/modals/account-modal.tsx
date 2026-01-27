@@ -41,8 +41,6 @@ export function AccountModal({
 
   if (!isOpen) return null;
 
-  console.log(subscription);
-
   return (
     <AnimatePresence>
       {isOpen && (

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth"; // Your better-auth instance
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { stripe } from "@/lib/stripe";
 import Plan from "@/app/models/plan/plan.model";
 import Subscription from "@/app/models/subscription/subscription.model";
+import User from "@/app/models/user/user.model";
+import Payment from "@/app/models/payment/payment.model";
 import dbConnect from "@/lib/mongodb";
 
 export async function POST(req: Request) {
@@ -24,14 +26,19 @@ export async function POST(req: Request) {
     const plan = await Plan.findById(planId);
     if (!plan) return new NextResponse("Plan not found", { status: 404 });
 
-    // 2. Get user's current subscription to find their Stripe Customer ID
-    let subscription = await Subscription.findOne({ user: session.user.id });
+    // 2. Get User and ensure Stripe Customer ID
+    let user = await User.findById(session.user.id);
+    // Explicitly check for null user
+    if (!user) {
+      // Fallback: If better-auth user exists but Mongoose can't find it (rare), 
+      // we might rely on the session, but strictly we should have a user record.
+      // For now, let's assume we must find it.
+      return new NextResponse("User record not found", { status: 404 });
+    }
 
-    let stripeCustomerId = subscription?.stripeCustomerId;
+    let stripeCustomerId = user.stripeCustomerId;
 
-    // FIX: If the currenet stripeCustomerId is just the user.id (from your seed script),
-    // we need to create a REAL Stripe Customer.
-    if (!stripeCustomerId || stripeCustomerId === session.user.id) {
+    if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
         email: session.user.email,
         name: session.user.name,
@@ -40,15 +47,21 @@ export async function POST(req: Request) {
         },
       });
       stripeCustomerId = customer.id;
-
-      // Save this real ID back to your DB so we don't create it again
-      if (subscription) {
-        subscription.stripeCustomerId = stripeCustomerId;
-        await subscription.save();
-      }
+      user.stripeCustomerId = stripeCustomerId;
+      await user.save();
     }
 
-    // 3. Create Stripe Checkout Session
+    // 3. Check for EXISTING active subscription
+    const currentSubscription = await Subscription.findOne({
+      user: session.user.id,
+      isActive: true,
+    });
+
+    if (currentSubscription && currentSubscription.plan.toString() === planId) {
+      return new NextResponse("You are already subscribed to this plan", { status: 400 });
+    }
+
+    // 4. Create New Stripe Checkout Session (Full Price)
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       mode: "subscription",
@@ -57,11 +70,8 @@ export async function POST(req: Request) {
         {
           price_data: {
             currency: "usd",
-            product_data: {
-              name: plan.name,
-              description: plan.description,
-            },
-            unit_amount: Math.round(plan.priceUsd * 100), // Stripe expects cents
+            product: plan.stripeProductId,
+            unit_amount: Math.round(plan.priceUsd * 100),
             recurring: {
               interval: "month",
             },
@@ -71,7 +81,7 @@ export async function POST(req: Request) {
       ],
       metadata: {
         userId: session.user.id,
-        planId: planId, // Important: Pass the plan ID so our webhook knows what they bought
+        planId: planId,
       },
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/upgrade?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/upgrade?canceled=true`,

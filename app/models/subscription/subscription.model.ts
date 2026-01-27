@@ -18,6 +18,9 @@ const subscriptionSchema = new Schema<ISubscription>(
       type: String,
       required: [true, "Stripe Customer ID is required"],
     },
+    stripeSubscriptionId: {
+      type: String,
+    },
     isActive: {
       type: Boolean,
       default: true,
