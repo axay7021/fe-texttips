@@ -1,7 +1,10 @@
-"use client";
+'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { LogOut, Sparkles, User } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +13,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { LogOut, User, Sparkles } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { authClient } from '@/lib/auth-client';
 
 interface UserNavProps {
   user: {
@@ -25,8 +25,8 @@ interface UserNavProps {
   subscription?: any;
 }
 
-import { AccountModal } from "./modals/account-modal";
-import { useState } from "react";
+import { useState } from 'react';
+import { AccountModal } from './modals/account-modal';
 
 // ... existing code ...
 
@@ -38,7 +38,7 @@ export function UserNav({ user, subscription }: UserNavProps) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/auth/sign-in");
+          router.push('/auth/sign-in');
           router.refresh();
         },
       },
@@ -50,27 +50,27 @@ export function UserNav({ user, subscription }: UserNavProps) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
-            className="relative h-10 w-10 rounded-full cursor-pointer"
+            variant='ghost'
+            className='relative h-10 w-10 rounded-full cursor-pointer'
           >
-            <Avatar className="h-10 w-10 border border-gray-200">
-              <AvatarImage src={user.image || ""} alt={user.name} />
-              <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">
+            <Avatar className='h-10 w-10 border border-gray-200'>
+              <AvatarImage src={user.image || ''} alt={user.name} />
+              <AvatarFallback className='bg-indigo-100 text-indigo-700 font-bold'>
                 {user.name
-                  .split(" ")
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")
+                  .join('')
                   .toUpperCase()
                   .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{user.name}</p>
-              <p className="text-xs leading-none text-muted-foreground">
+        <DropdownMenuContent className='w-56' align='end' forceMount>
+          <DropdownMenuLabel className='font-normal'>
+            <div className='flex flex-col space-y-1'>
+              <p className='text-sm font-medium leading-none'>{user.name}</p>
+              <p className='text-xs leading-none text-muted-foreground'>
                 {user.email}
               </p>
             </div>
@@ -78,18 +78,18 @@ export function UserNav({ user, subscription }: UserNavProps) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              className="cursor-pointer"
+              className='cursor-pointer'
               onClick={() => setIsAccountOpen(true)}
             >
-              <User className="mr-2 h-4 w-4" />
+              <User className='mr-2 h-4 w-4' />
               <span>Account</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" asChild>
+            <DropdownMenuItem className='cursor-pointer' asChild>
               <Link
-                href="/dashboard/upgrade"
-                className="flex items-center w-full"
+                href='/dashboard/upgrade'
+                className='flex items-center w-full'
               >
-                <Sparkles className="mr-2 h-4 w-4 text-brand-blue" />
+                <Sparkles className='mr-2 h-4 w-4 text-brand-blue' />
                 <span>Upgrade</span>
               </Link>
             </DropdownMenuItem>
@@ -97,9 +97,9 @@ export function UserNav({ user, subscription }: UserNavProps) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handleLogout}
-            className="cursor-pointer text-red-600 focus:text-red-600"
+            className='cursor-pointer text-red-600 focus:text-red-600'
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <LogOut className='mr-2 h-4 w-4' />
             <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

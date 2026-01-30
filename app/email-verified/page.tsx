@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import { authClient } from "@/lib/auth-client";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { authClient } from '@/lib/auth-client';
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-  const [status, setStatus] = useState("verifying");
+  const token = searchParams.get('token');
+  const [status, setStatus] = useState('verifying');
   const router = useRouter();
 
   useEffect(() => {
@@ -21,22 +20,23 @@ function VerifyEmailContent() {
         },
         {
           onSuccess: () => {
-            setStatus("success");
-            setTimeout(() => router.push("/"), 3000);
+            setStatus('success');
+            setTimeout(() => router.push('/'), 3000);
           },
           onError: (ctx) => {
-            setStatus("error");
+            setStatus('error');
+            // biome-ignore lint/suspicious/noConsole: Allow logging
             console.error(ctx.error.message);
           },
         },
       );
     } else {
-      setStatus("error");
+      setStatus('error');
     }
   }, [token, router]);
 
-  if (status === "verifying") return <h1>Verifying your email...</h1>;
-  if (status === "success") return <h1>Email Verified! Redirecting...</h1>;
+  if (status === 'verifying') return <h1>Verifying your email...</h1>;
+  if (status === 'success') return <h1>Email Verified! Redirecting...</h1>;
   return <h1>Verification failed. The link may be invalid or expired.</h1>;
 }
 

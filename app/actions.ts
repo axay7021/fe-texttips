@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 
 export const signUpAction = async (formData: FormData) => {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
 
   await auth.api.signUpEmail({
     body: {
@@ -19,12 +19,12 @@ export const signUpAction = async (formData: FormData) => {
     headers: await headers(),
   });
 
-  redirect("/");
+  redirect('/');
 };
 
 export async function handleLogout() {
   await auth.api.signOut({
     headers: await headers(),
   });
-  redirect("/auth/sign-in");
+  redirect('/auth/sign-in');
 }

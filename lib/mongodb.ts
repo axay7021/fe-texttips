@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 declare global {
   // keep a typed global cache for mongoose across module reloads
-
-  var mongoose: {
+  var mongooseCache: {
     conn: mongoose.Connection | null;
     promise: Promise<mongoose.Connection> | null;
   };
@@ -12,13 +11,13 @@ declare global {
 const MONGODB_URI = process.env.MONGODB_URI!;
 
 if (!MONGODB_URI) {
-  throw new Error("Please define mongo_uri in env variables");
+  throw new Error('Please define mongo_uri in env variables');
 }
 
-let cached = global.mongoose;
+let cached = global.mongooseCache;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = global.mongooseCache = { conn: null, promise: null };
 }
 
 async function dbConnect() {
@@ -34,13 +33,14 @@ async function dbConnect() {
 
     cached.promise = mongoose
       .connect(MONGODB_URI, opts)
-      .then(() => mongoose.connection);
+      .then((mongoose) => mongoose.connection);
   }
 
   try {
     cached.conn = await cached.promise;
 
-    console.log("DB Connected");
+    // biome-ignore lint/suspicious/noConsole: Allow logging
+    console.log('DB Connected');
   } catch (error) {
     cached.promise = null;
     throw error;

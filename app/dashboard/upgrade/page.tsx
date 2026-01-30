@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { Navbar } from "@/components/navbar";
-import PricingSection from "@/components/pricing-section";
-import { getPlans, getUserSubscription } from "@/app/api/plans/service";
-import FaqSection from "@/components/faq-section";
-import Footer from "@/components/footer";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getPlans, getUserSubscription } from '@/app/api/plans/service';
+import FaqSection from '@/components/faq-section';
+import Footer from '@/components/footer';
+import { Navbar } from '@/components/navbar';
+import PricingSection from '@/components/pricing-section';
+import { auth } from '@/lib/auth';
 
 export default async function UpgradePage() {
   const session = await auth.api.getSession({
@@ -13,7 +13,7 @@ export default async function UpgradePage() {
   });
 
   if (!session) {
-    redirect("/auth/sign-in");
+    redirect('/auth/sign-in');
   }
 
   // Fetch data
@@ -23,7 +23,7 @@ export default async function UpgradePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className='min-h-screen bg-white'>
       {/* Navbar */}
       <Navbar
         session={session}
@@ -31,13 +31,13 @@ export default async function UpgradePage() {
         subscription={subscription}
       />
 
-      <main className="pt-24 pb-20">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 md:mb-16 space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-[#1a1a1a] tracking-tight">
+      <main className='pt-24 pb-20'>
+        <div className='mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-10 md:mb-16 space-y-4'>
+            <h1 className='text-3xl md:text-5xl font-bold text-[#1a1a1a] tracking-tight'>
               Upgrade your plan
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
               Choose the perfect plan to unlock advanced features and
               limitations for your content creation.
             </p>

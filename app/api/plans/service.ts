@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import dbConnect from "@/lib/mongodb";
-import Plan from "@/app/models/plan/plan.model";
-import Subscription from "@/app/models/subscription/subscription.model";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { headers } from 'next/headers';
+import Plan from '@/app/models/plan/plan.model';
+import Subscription from '@/app/models/subscription/subscription.model';
+import { auth } from '@/lib/auth';
+import dbConnect from '@/lib/mongodb';
 
 // 1. Fetch Plans (Public)
 export async function getPlans() {
@@ -22,11 +22,12 @@ export async function getPlans() {
       }));
     }
   } catch (error) {
-    console.error("Error fetching plans from DB:", error);
+    // biome-ignore lint/suspicious/noConsole: Allow logging
+    console.error('Error fetching plans from DB:', error);
   }
 
   // Fallback to JSON if DB is empty or fails
-  const plansData = await import("@/app/models/plan/plan.json");
+  const plansData = await import('@/app/models/plan/plan.json');
   const plans = plansData.default || plansData;
 
   // Add fake _ids and ensure structure matches what UI expects
@@ -54,7 +55,7 @@ export async function getUserSubscription() {
     user: session.user.id,
     isActive: true,
   })
-    .populate("plan") // Fill in the plan details (name, features, etc)
+    .populate('plan') // Fill in the plan details (name, features, etc)
     .lean();
 
   if (!subscription) {
@@ -68,9 +69,7 @@ export async function getUserSubscription() {
     user: subscription.user.toString(),
     // Handle the populated plan object
     plan: {
-      // @ts-ignore - we know this is populated now
       ...subscription.plan,
-      // @ts-ignore
       _id: subscription.plan._id.toString(),
     },
     startDate: subscription.startDate.toISOString(),

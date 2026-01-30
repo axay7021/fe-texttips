@@ -1,17 +1,17 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://text-tips.com",
+      url: 'https://text-tips.com',
       lastModified: new Date(),
-      changeFrequency: "yearly",
+      changeFrequency: 'yearly',
       priority: 1,
     },
     {
-      url: "https://text-tips.com/about",
+      url: 'https://text-tips.com/about',
       lastModified: new Date(),
-      changeFrequency: "monthly",
+      changeFrequency: 'monthly',
       priority: 0.8,
     },
     // Add more routes here as your app grows

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useCompletion } from "@ai-sdk/react";
-import { EnhancerInput } from "./enhancer/enhancer-input";
-import { EnhancerResults } from "./enhancer/enhancer-results";
-import { EnhancedVersion } from "./enhancer/types";
-import { parseEnhancementResult } from "./enhancer/utils";
+import { useCompletion } from '@ai-sdk/react';
+import { useEffect, useState } from 'react';
+import { EnhancerInput } from './enhancer/enhancer-input';
+import { EnhancerResults } from './enhancer/enhancer-results';
+import type { EnhancedVersion } from './enhancer/types';
+import { parseEnhancementResult } from './enhancer/utils';
 
 interface DashboardTextEnhancerUIProps {
   isPro?: boolean;
@@ -23,7 +23,7 @@ export function DashboardTextEnhancerUI({
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const { input, setInput, completion, isLoading, complete } = useCompletion({
-    api: "/api/enhance",
+    api: '/api/enhance',
   });
 
   // Real-time parsing of the stream
@@ -53,7 +53,8 @@ export function DashboardTextEnhancerUI({
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
-      console.error("Failed to copy", err);
+      // biome-ignore lint/suspicious/noConsole: Allow logging
+      console.error('Failed to copy', err);
     }
   };
 
@@ -62,7 +63,7 @@ export function DashboardTextEnhancerUI({
   };
 
   return (
-    <div className="w-full mx-auto relative z-20 flex flex-col gap-6">
+    <div className='w-full mx-auto relative z-20 flex flex-col gap-6'>
       <EnhancerInput
         text={input}
         setText={setInput}

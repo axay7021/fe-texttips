@@ -1,8 +1,8 @@
-declare module "react-confetti-boom" {
-  import { FC } from "react";
+declare module 'react-confetti-boom' {
+  import { FC } from 'react';
 
   export interface ConfettiProps {
-    mode?: "boom" | "fall";
+    mode?: 'boom' | 'fall';
     x?: number;
     y?: number;
     particleCount?: number;

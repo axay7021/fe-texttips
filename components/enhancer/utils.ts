@@ -1,4 +1,4 @@
-import { EnhancedVersion, STYLE_ICONS } from "./types";
+import { type EnhancedVersion, STYLE_ICONS } from './types';
 
 /**
  * Parses the raw AI completion text into structured EnhancedVersion objects.
@@ -12,11 +12,11 @@ export function parseEnhancementResult(completion: string): EnhancedVersion[] {
   // Regex matches: (Label):\n(Content) until next label or end
   // Pattern: (Professional|Friendly|...):\s*\n([content])
   // Using lookahead for next label or end of string
-  const pattern = `(?:^|\\n)(${styleKeys.join("|")}):\\s*\\n([\\s\\S]*?)(?=(?:\\n(?:${styleKeys.join("|")}):)|$)`;
-  const regex = new RegExp(pattern, "gi");
+  const pattern = `(?:^|\\n)(${styleKeys.join('|')}):\\s*\\n([\\s\\S]*?)(?=(?:\\n(?:${styleKeys.join('|')}):)|$)`;
+  const regex = new RegExp(pattern, 'gi');
 
   const versions: EnhancedVersion[] = [];
-  let match;
+  let match: RegExpExecArray | null;
 
   while ((match = regex.exec(completion)) !== null) {
     const titleRaw = match[1];

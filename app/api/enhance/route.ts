@@ -1,8 +1,8 @@
-import { streamText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { streamText } from 'ai';
 
 export async function POST(req: Request) {
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || "";
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || '';
 
   const google = createGoogleGenerativeAI({
     apiKey: apiKey,
@@ -10,13 +10,15 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    console.log("Enhance API Request Body:", body);
+    // biome-ignore lint/suspicious/noConsole: Allow logging
+    console.log('Enhance API Request Body:', body);
 
     // Check if key is present to avoid silent failures
     if (!apiKey) {
-      console.error("GOOGLE_GENERATIVE_AI_API_KEY is missing in process.env");
+      // biome-ignore lint/suspicious/noConsole: Allow logging
+      console.error('GOOGLE_GENERATIVE_AI_API_KEY is missing in process.env');
       return new Response(
-        "Missing Google API Key. Please add GOOGLE_GENERATIVE_AI_API_KEY to your .env file.",
+        'Missing Google API Key. Please add GOOGLE_GENERATIVE_AI_API_KEY to your .env file.',
         { status: 500 },
       );
     }
@@ -24,8 +26,8 @@ export async function POST(req: Request) {
     const { prompt, text } = body;
     const userPrompt = prompt || text;
 
-    if (!userPrompt || typeof userPrompt !== "string" || !userPrompt.trim()) {
-      return new Response("Missing prompt", { status: 400 });
+    if (!userPrompt || typeof userPrompt !== 'string' || !userPrompt.trim()) {
+      return new Response('Missing prompt', { status: 400 });
     }
 
     const systemPrompt = `You are a text enhancement expert. Your task is to rewrite the user's text in 6 distinct styles. You must provide all 6 versions in a single response.
@@ -55,18 +57,21 @@ export async function POST(req: Request) {
     (etc)`;
 
     const result = streamText({
-      model: google("gemini-2.5-flash-lite"),
+      model: google('gemini-2.5-flash-lite'),
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
       ],
       onError: ({ error }) => {
-        console.error("Stream Error:", error);
+        // biome-ignore lint/suspicious/noConsole: Allow logging
+        console.error('Stream Error:', error);
       },
-      onFinish: ({ text }) => console.log("Stream Finished:", text),
+      // biome-ignore lint/suspicious/noConsole: Allow logging
+      onFinish: ({ text }) => console.log('Stream Finished:', text),
     });
 
     result.usage.then((usages) => {
+      // biome-ignore lint/suspicious/noConsole: Allow logging
       console.log({
         inputTokens: usages.inputTokens,
         outputTokens: usages.outputTokens,
@@ -76,11 +81,12 @@ export async function POST(req: Request) {
 
     return result.toUIMessageStreamResponse();
   } catch (error: any) {
-    console.error("Enhance Error:", error);
-    const errorMessage = error.message || "Internal Server Error";
+    // biome-ignore lint/suspicious/noConsole: Allow logging
+    console.error('Enhance Error:', error);
+    const errorMessage = error.message || 'Internal Server Error';
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

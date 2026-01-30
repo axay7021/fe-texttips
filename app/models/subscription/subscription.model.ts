@@ -1,22 +1,22 @@
-import mongoose, { Schema } from "mongoose";
-import { schemaOptions } from "../common.model";
-import { ISubscription } from "./subscription.types";
+import mongoose, { Schema } from 'mongoose';
+import { schemaOptions } from '../common.model';
+import type { ISubscription } from './subscription.types';
 
 const subscriptionSchema = new Schema<ISubscription>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "User is required"],
+      ref: 'User',
+      required: [true, 'User is required'],
     },
     plan: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Plan",
-      required: [true, "Plan is required"],
+      ref: 'Plan',
+      required: [true, 'Plan is required'],
     },
     stripeCustomerId: {
       type: String,
-      required: [true, "Stripe Customer ID is required"],
+      required: [true, 'Stripe Customer ID is required'],
     },
     isActive: {
       type: Boolean,
@@ -24,11 +24,11 @@ const subscriptionSchema = new Schema<ISubscription>(
     },
     startDate: {
       type: Date,
-      required: [true, "Start date is required"],
+      required: [true, 'Start date is required'],
     },
     endDate: {
       type: Date,
-      required: [true, "End date is required"],
+      required: [true, 'End date is required'],
     },
     cancelAtPeriodEnd: {
       type: Boolean,
@@ -42,4 +42,4 @@ const subscriptionSchema = new Schema<ISubscription>(
 subscriptionSchema.index({ user: 1, createdAt: -1 });
 
 export default mongoose.models.Subscription ||
-  mongoose.model<ISubscription>("Subscription", subscriptionSchema);
+  mongoose.model<ISubscription>('Subscription', subscriptionSchema);

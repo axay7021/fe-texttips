@@ -1,35 +1,35 @@
-import mongoose, { Model, Schema } from "mongoose";
-import { IPlanDocument } from "./plan.types";
-import { schemaOptions } from "../common.model";
+import mongoose, { Schema } from 'mongoose';
+import { schemaOptions } from '../common.model';
+import type { IPlanDocument } from './plan.types';
 
 const planSchema = new Schema<IPlanDocument>(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, 'Name is required'],
       trim: true,
-      maxlength: [100, "Name cannot be more than 100 characters"],
+      maxlength: [100, 'Name cannot be more than 100 characters'],
     },
     originalPriceUsd: {
       type: Number,
-      required: [true, "Original price is required"],
+      required: [true, 'Original price is required'],
     },
     priceUsd: {
       type: Number,
-      required: [true, "Price is required"],
+      required: [true, 'Price is required'],
     },
     stripeProductId: {
       type: String,
-      required: [true, "Stripe Product ID is required"],
+      required: [true, 'Stripe Product ID is required'],
     },
     wordLimit: {
       type: Number,
-      required: [true, "Word limit is required"],
+      required: [true, 'Word limit is required'],
       default: 1000,
     },
     description: {
       type: String,
-      required: [true, "Description is required"],
+      required: [true, 'Description is required'],
     },
     isPopular: {
       type: Boolean,
@@ -45,8 +45,8 @@ const planSchema = new Schema<IPlanDocument>(
     },
     type: {
       type: String,
-      enum: ["personal", "business"],
-      default: "personal",
+      enum: ['personal', 'business'],
+      default: 'personal',
     },
   },
   schemaOptions,
@@ -56,4 +56,4 @@ const planSchema = new Schema<IPlanDocument>(
 planSchema.index({ name: 1, createdAt: -1 });
 
 export default mongoose.models.Plan ||
-  mongoose.model<IPlanDocument>("Plan", planSchema);
+  mongoose.model<IPlanDocument>('Plan', planSchema);

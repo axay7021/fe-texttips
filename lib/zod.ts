@@ -1,43 +1,43 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const ForgotPasswordSchema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, { message: "Email is required" }),
+    .email({ message: 'Invalid email address' })
+    .min(1, { message: 'Email is required' }),
 });
 
 export const ResetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters long" })
-      .max(20, { message: "Password must be at most 20 characters long" }),
+      .min(8, { message: 'Password must be at least 8 characters long' })
+      .max(20, { message: 'Password must be at most 20 characters long' }),
     confirmPassword: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters long" })
-      .max(20, { message: "Password must be at most 20 characters long" }),
+      .min(8, { message: 'Password must be at least 8 characters long' })
+      .max(20, { message: 'Password must be at most 20 characters long' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
 export const SignInSchema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, { message: "Email is required" }),
-  password: z.string().min(1, { message: "Password is required" }),
+    .email({ message: 'Invalid email address' })
+    .min(1, { message: 'Email is required' }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 
 export const SignUpSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
+  name: z.string().min(1, { message: 'Name is required' }),
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, { message: "Email is required" }),
+    .email({ message: 'Invalid email address' })
+    .min(1, { message: 'Email is required' }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long" }),
+    .min(8, { message: 'Password must be at least 8 characters long' }),
 });

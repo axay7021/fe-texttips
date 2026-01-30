@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import Image from "next/image";
-import heroImage from "@/public/hero-bg-pattern.png";
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import heroImage from '@/public/hero-bg-pattern.png';
 
 export function BackgroundAnimation() {
   const lineCount = 6; // Number of vertical lines to match the design roughly
 
   return (
     <>
-      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none flex justify-between w-full mx-auto px-4 md:px-24">
+      <div className='absolute inset-0 z-10 overflow-hidden pointer-events-none flex justify-between w-full mx-auto px-4 md:px-24'>
         {/* Generate vertical lines */}
         {Array.from({ length: lineCount }).map((_, i) => {
           const duration = 5 + Math.random() * 4; // Increased speed (lower duration)
@@ -17,25 +17,27 @@ export function BackgroundAnimation() {
 
           return (
             <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: Static array
               key={i}
-              className="relative w-px h-full bg-[#f0f7ff]" // Very faint blue line
+              className='relative w-px h-full bg-[#f0f7ff]' // Very faint blue line
             >
               {/* Animated beams moving down */}
               {Array.from({ length: 2 }).map((_, j) => (
                 <motion.div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Static array
                   key={j}
-                  initial={{ top: "-20%", opacity: 0 }}
+                  initial={{ top: '-20%', opacity: 0 }}
                   animate={{
-                    top: ["-20%", "120%"],
+                    top: ['-20%', '120%'],
                     opacity: [0, 1, 0],
                   }}
                   transition={{
                     duration: duration,
                     repeat: Infinity,
-                    ease: "linear",
+                    ease: 'linear',
                     delay: delayOffset + j * (duration / 2), // Perfectly spaced delays (halfway point)
                   }}
-                  className="absolute w-[3px] h-[10vh] -left-px bg-[#c9e4ff]"
+                  className='absolute w-[3px] h-[10vh] -left-px bg-[#c9e4ff]'
                 />
               ))}
             </div>
@@ -43,12 +45,12 @@ export function BackgroundAnimation() {
         })}
       </div>
       {/* Background Pattern */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className='absolute inset-0 z-0 pointer-events-none'>
         <Image
           src={heroImage}
-          alt="Hero Pattern"
+          alt='Hero Pattern'
           fill
-          className="object-contain scale-85 -translate-y-12"
+          className='object-contain scale-85 -translate-y-12'
           priority
         />
       </div>

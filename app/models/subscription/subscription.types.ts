@@ -1,4 +1,4 @@
-import { Document, Schema } from "mongoose";
+import type { Document, Schema } from 'mongoose';
 
 export interface ISubscription extends Document {
   user: Schema.Types.ObjectId;

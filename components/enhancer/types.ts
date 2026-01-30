@@ -5,10 +5,10 @@ export interface EnhancedVersion {
 }
 
 export const STYLE_ICONS: Record<string, string> = {
-  Professional: "👔",
-  Friendly: "👋",
-  Concise: "✂️",
-  Polished: "✨",
-  Clear: "👓",
-  Confident: "🚀",
+  Professional: '👔',
+  Friendly: '👋',
+  Concise: '✂️',
+  Polished: '✨',
+  Clear: '👓',
+  Confident: '🚀',
 };

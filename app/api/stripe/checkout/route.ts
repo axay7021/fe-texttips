@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth"; // Your better-auth instance
-import { headers } from "next/headers";
-import { stripe } from "@/lib/stripe";
-import Plan from "@/app/models/plan/plan.model";
-import Subscription from "@/app/models/subscription/subscription.model";
-import dbConnect from "@/lib/mongodb";
+import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
+import Plan from '@/app/models/plan/plan.model';
+import Subscription from '@/app/models/subscription/subscription.model';
+import { auth } from '@/lib/auth'; // Your better-auth instance
+import dbConnect from '@/lib/mongodb';
+import { stripe } from '@/lib/stripe';
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     });
 
     if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const { planId } = await req.json();
@@ -22,10 +22,10 @@ export async function POST(req: Request) {
 
     // 1. Get the plan details from DB
     const plan = await Plan.findById(planId);
-    if (!plan) return new NextResponse("Plan not found", { status: 404 });
+    if (!plan) return new NextResponse('Plan not found', { status: 404 });
 
     // 2. Get user's current subscription to find their Stripe Customer ID
-    let subscription = await Subscription.findOne({ user: session.user.id });
+    const subscription = await Subscription.findOne({ user: session.user.id });
 
     let stripeCustomerId = subscription?.stripeCustomerId;
 
@@ -51,19 +51,19 @@ export async function POST(req: Request) {
     // 3. Create Stripe Checkout Session
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
-      mode: "subscription",
-      payment_method_types: ["card"],
+      mode: 'subscription',
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: 'usd',
             product_data: {
               name: plan.name,
               description: plan.description,
             },
             unit_amount: Math.round(plan.priceUsd * 100), // Stripe expects cents
             recurring: {
-              interval: "month",
+              interval: 'month',
             },
           },
           quantity: 1,
@@ -79,7 +79,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {
-    console.error("[STRIPE_CHECKOUT]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    // biome-ignore lint/suspicious/noConsole: Allow logging
+    console.error('[STRIPE_CHECKOUT]', error);
+    return new NextResponse('Internal Error', { status: 500 });
   }
 }

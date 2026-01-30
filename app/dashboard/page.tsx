@@ -1,13 +1,12 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { Navbar } from "@/components/navbar";
-import { DashboardTextEnhancerUI } from "@/components/dashboard-text-enhancer-ui";
-import { BackgroundAnimation } from "@/components/background-animation";
-
-import { getUserSubscription } from "@/app/api/plans/service";
-import FaqSection from "@/components/faq-section";
-import Footer from "@/components/footer";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getUserSubscription } from '@/app/api/plans/service';
+import { BackgroundAnimation } from '@/components/background-animation';
+import { DashboardTextEnhancerUI } from '@/components/dashboard-text-enhancer-ui';
+import FaqSection from '@/components/faq-section';
+import Footer from '@/components/footer';
+import { Navbar } from '@/components/navbar';
+import { auth } from '@/lib/auth';
 
 export default async function Dashboard() {
   const session = await auth.api.getSession({
@@ -15,7 +14,7 @@ export default async function Dashboard() {
   });
 
   if (!session) {
-    redirect("/auth/sign-in");
+    redirect('/auth/sign-in');
   }
 
   // Fetch subscription
@@ -23,9 +22,9 @@ export default async function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen relative overflow-hidden bg-white">
+      <div className='min-h-screen relative overflow-hidden bg-white'>
         {/* Background Elements */}
-        <div className="absolute inset-0 pointer-events-none z-0">
+        <div className='absolute inset-0 pointer-events-none z-0'>
           <BackgroundAnimation />
           {/* <HeroBadges /> */}
         </div>
@@ -38,11 +37,11 @@ export default async function Dashboard() {
         />
 
         {/* Main Content Area */}
-        <main className="relative z-10 flex flex-col items-center justify-start min-h-[calc(100vh-80px)] px-4 pb-20 pt-20 md:pt-32">
-          <div className="w-full max-w-[1120px] mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700">
+        <main className='relative z-10 flex flex-col items-center justify-start min-h-[calc(100vh-80px)] px-4 pb-20 pt-20 md:pt-32'>
+          <div className='w-full max-w-[1120px] mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700'>
             <DashboardTextEnhancerUI
               isPro={
-                subscription?.isActive && subscription?.plan?.name !== "Free"
+                subscription?.isActive && subscription?.plan?.name !== 'Free'
               }
             />
           </div>
