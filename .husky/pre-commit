@@ -1,4 +1,4 @@
-# Run lint-staged (ESLint + Prettier on staged files)
+# Run Biome Check & Format on staged files
 pnpm lint-staged
 
 # Run type checking
