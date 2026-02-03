@@ -1,8 +1,8 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth'; // Your better-auth instance
+import { auth } from '@/lib/auth/auth'; // Your better-auth instance
 import dbConnect from '@/lib/mongodb';
-import { stripe } from '@/lib/stripe';
+import { stripeClient } from '@/lib/stripe';
 import Plan from '@/models/plan/plan.model';
 import Subscription from '@/models/subscription/subscription.model';
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     // FIX: If the currenet stripeCustomerId is just the user.id (from your seed script),
     // we need to create a REAL Stripe Customer.
     if (!stripeCustomerId || stripeCustomerId === session.user.id) {
-      const customer = await stripe.customers.create({
+      const customer = await stripeClient.customers.create({
         email: session.user.email,
         name: session.user.name,
         metadata: {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Create Stripe Checkout Session
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripeClient.checkout.sessions.create({
       customer: stripeCustomerId,
       mode: 'subscription',
       payment_method_types: ['card'],

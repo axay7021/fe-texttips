@@ -2,7 +2,6 @@
 
 import { LogOut, Sparkles, User } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { authClient } from '@/lib/auth-client';
 
 interface UserNavProps {
   user: {
@@ -26,22 +24,12 @@ interface UserNavProps {
 }
 
 import { useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 import { AccountModal } from './modals/account-modal';
 
 export function UserNav({ user, subscription }: UserNavProps) {
-  const router = useRouter();
+  const { handleLogout } = useAuth();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-
-  const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/auth/sign-in');
-          router.refresh();
-        },
-      },
-    });
-  };
 
   return (
     <>

@@ -28,13 +28,14 @@ const PricingSection = ({
 
   // Optional clear params after showing
   useEffect(() => {
-    if (success || canceled) {
-      // clean up url after 5 seconds or just leave it
-      const timer = setTimeout(() => {
-        router.replace('/dashboard/upgrade', { scroll: false });
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
+    if (!success && !canceled) return;
+
+    // clean up url after 5 seconds or just leave it
+    const timer = setTimeout(() => {
+      router.replace('/dashboard/upgrade', { scroll: false });
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, [success, canceled, router]);
 
   const filteredPlans = plans.filter((plan) => plan.type === activeTab);
@@ -43,7 +44,7 @@ const PricingSection = ({
     if (plan.name === 'Free' || loadingPlanId) return;
 
     try {
-      setLoadingPlanId(plan._id);
+      setLoadingPlanId(String(plan._id));
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: {
@@ -72,7 +73,7 @@ const PricingSection = ({
     >
       {/* Confetti */}
       {success && (
-        <div className='flex w-full justify-center fixed top-0 left-0 w-full h-full'>
+        <div className='flex justify-center fixed top-0 left-0 w-full h-full'>
           <Confetti mode='boom' particleCount={50} shapeSize={20} />
         </div>
       )}
@@ -128,11 +129,11 @@ const PricingSection = ({
         <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl'>
           {filteredPlans.map((plan) => {
             const isCurrent = currentPlanId
-              ? plan._id === currentPlanId
+              ? String(plan._id) === currentPlanId
               : false;
             // If user has a plan, highlight ONLY that plan. Otherwise fallback to recommended.
             const isHighlighted = currentPlanId ? isCurrent : plan.isPopular;
-            const isLoading = loadingPlanId === plan._id;
+            const isLoading = loadingPlanId === String(plan._id);
 
             return (
               <div

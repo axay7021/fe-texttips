@@ -1,7 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 import dbConnect from '@/lib/mongodb';
 import Plan from '@/models/plan/plan.model';
 import Subscription from '@/models/subscription/subscription.model';

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import config from '@/config';
 
 declare global {
   // keep a typed global cache for mongoose across module reloads
@@ -8,10 +9,10 @@ declare global {
   };
 }
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = config.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('Please define mongo_uri in env variables');
+  throw new Error('Please define MONGODB_URI in env variables');
 }
 
 let cached = global.mongooseCache;

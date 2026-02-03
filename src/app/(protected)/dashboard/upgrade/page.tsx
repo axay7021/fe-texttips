@@ -5,7 +5,7 @@ import FaqSection from '@/components/faq-section';
 import Footer from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import PricingSection from '@/components/pricing-section';
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 
 export default async function UpgradePage() {
   const session = await auth.api.getSession({

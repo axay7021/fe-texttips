@@ -10,9 +10,10 @@ import { FcGoogle } from 'react-icons/fc';
 import type { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
 import { SignUpSchema } from '@/lib/zod';
+import { EmailVerification } from './EmailVerification';
 
 export default function SignUpPage() {
-  const { signUp, signInWithSocial, loading, error } = useAuth();
+  const { signUp, signInWithSocial, loading, error, verifyEmail } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -31,6 +32,10 @@ export default function SignUpPage() {
   const handleSignUp = async (values: z.infer<typeof SignUpSchema>) => {
     await signUp(values);
   };
+
+  if (verifyEmail) {
+    return <EmailVerification />;
+  }
 
   return (
     <div

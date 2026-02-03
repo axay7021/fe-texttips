@@ -7,7 +7,7 @@ import Footer from '@/components/footer';
 import { HeroSection } from '@/components/hero-section';
 import { Navbar } from '@/components/navbar';
 import PricingSection from '@/components/pricing-section';
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 import { getPlans } from './api/plans/service';
 
 export default async function LandingPage() {

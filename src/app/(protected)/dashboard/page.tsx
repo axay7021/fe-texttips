@@ -6,7 +6,7 @@ import { DashboardTextEnhancerUI } from '@/components/dashboard-text-enhancer-ui
 import FaqSection from '@/components/faq-section';
 import Footer from '@/components/footer';
 import { Navbar } from '@/components/navbar';
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth/auth';
 
 export default async function Dashboard() {
   const session = await auth.api.getSession({

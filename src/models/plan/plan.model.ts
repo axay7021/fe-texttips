@@ -1,8 +1,8 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { type Model, Schema } from 'mongoose';
 import { schemaOptions } from '../common.model';
-import type { IPlanDocument } from './plan.types';
+import type { IPlan } from './plan.types';
 
-const planSchema = new Schema<IPlanDocument>(
+const planSchema = new Schema<IPlan>(
   {
     name: {
       type: String,
@@ -55,5 +55,5 @@ const planSchema = new Schema<IPlanDocument>(
 // Create indexes for better query performance
 planSchema.index({ name: 1, createdAt: -1 });
 
-export default mongoose.models.Plan ||
-  mongoose.model<IPlanDocument>('Plan', planSchema);
+export default (mongoose.models.Plan as Model<IPlan>) ||
+  mongoose.model<IPlan>('Plan', planSchema);

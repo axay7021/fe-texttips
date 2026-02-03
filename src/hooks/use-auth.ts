@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { z } from 'zod';
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth/auth-client';
 import type {
   ForgotPasswordSchema,
   ResetPasswordSchema,
@@ -16,6 +16,9 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const [verifyEmail, setVerifyEmail] = useState('');
+  const [showVerifyEmail, setShowVerifyEmail] = useState(false);
 
   const signUp = async (values: z.infer<typeof SignUpSchema>) => {
     setLoading(true);
@@ -30,7 +33,8 @@ export const useAuth = () => {
       },
       {
         onSuccess: () => {
-          router.push('/');
+          setVerifyEmail(values.email);
+          setShowVerifyEmail(true);
         },
         onError: (ctx) => {
           setError(ctx.error.message);
@@ -141,6 +145,27 @@ export const useAuth = () => {
     });
   };
 
+  const handleLogout = async () => {
+    setLoading(true);
+    setError(null);
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push('/auth/sign-in');
+          router.refresh();
+        },
+      },
+    });
+    setLoading(false);
+  };
+
+  const sendVerificationEmail = async () => {
+    return authClient.sendVerificationEmail({
+      email: verifyEmail,
+      callbackURL: '/',
+    });
+  };
+
   return {
     loading,
     error,
@@ -153,5 +178,9 @@ export const useAuth = () => {
     forgotPassword,
     resetPassword,
     signInWithSocial,
+    handleLogout,
+    verifyEmail,
+    showVerifyEmail,
+    sendVerificationEmail,
   };
 };

@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import dbConnect from '@/lib/mongodb';
-import { stripe } from '@/lib/stripe';
+import { stripeClient } from '@/lib/stripe';
 import Subscription from '@/models/subscription/subscription.model';
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = stripeClient.webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!,
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     console.log('👉 Subscription ID:', subscriptionId);
 
     if (subscriptionId) {
-      const subscription = (await stripe.subscriptions.retrieve(
+      const subscription = (await stripeClient.subscriptions.retrieve(
         subscriptionId,
       )) as any;
       // biome-ignore lint/suspicious/noConsole: Allow logging
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
     const subscriptionId = invoice.subscription as string;
 
     if (subscriptionId) {
-      const subscription = (await stripe.subscriptions.retrieve(
+      const subscription = (await stripeClient.subscriptions.retrieve(
         subscriptionId,
       )) as any;
 
