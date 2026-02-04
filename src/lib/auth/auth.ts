@@ -60,6 +60,9 @@ export const auth = betterAuth({
       subscription: {
         enabled: true,
         plans: STRIPE_PLANS,
+        authorizeReference: async () => {
+          return true;
+        },
       },
     }),
   ],

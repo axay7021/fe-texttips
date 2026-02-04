@@ -1,6 +1,11 @@
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getPlans, getUserSubscription } from '@/app/api/plans/service';
+import { getUserSubscription } from '@/app/actions/subscription';
 import FaqSection from '@/components/faq-section';
 import Footer from '@/components/footer';
 import { Navbar } from '@/components/navbar';
@@ -16,42 +21,38 @@ export default async function UpgradePage() {
     redirect('/auth/sign-in');
   }
 
-  // Fetch data
-  const [plans, subscription] = await Promise.all([
-    getPlans(),
-    getUserSubscription(),
-  ]);
+  const query = new QueryClient();
+
+  await query.prefetchQuery({
+    queryKey: ['user-subscription'],
+    queryFn: () => getUserSubscription(),
+  });
 
   return (
-    <div className='min-h-screen bg-white'>
-      {/* Navbar */}
-      <Navbar
-        session={session}
-        hideNavigation={true}
-        subscription={subscription}
-      />
+    <HydrationBoundary state={dehydrate(query)}>
+      <div className='min-h-screen bg-white'>
+        {/* Navbar */}
+        <Navbar session={session} hideNavigation={true} />
 
-      <main className='pt-24 pb-20'>
-        <div className='mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-10 md:mb-16 space-y-4'>
-            <h1 className='text-3xl md:text-5xl font-bold text-[#1a1a1a] tracking-tight'>
-              Upgrade your plan
-            </h1>
-            <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
-              Choose the perfect plan to unlock advanced features and
-              limitations for your content creation.
-            </p>
+        <main className='pt-24 pb-20'>
+          <div className='mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='text-center mb-10 md:mb-16 space-y-4'>
+              <h1 className='text-3xl md:text-5xl font-bold text-[#1a1a1a] tracking-tight'>
+                Upgrade your plan
+              </h1>
+              <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+                Choose the perfect plan to unlock advanced features and
+                limitations for your content creation.
+              </p>
+            </div>
+
+            <PricingSection session={session} />
           </div>
+        </main>
 
-          <PricingSection
-            plans={plans}
-            currentPlanId={subscription?.plan?._id}
-          />
-        </div>
-      </main>
-
-      <FaqSection />
-      <Footer />
-    </div>
+        <FaqSection />
+        <Footer />
+      </div>
+    </HydrationBoundary>
   );
 }

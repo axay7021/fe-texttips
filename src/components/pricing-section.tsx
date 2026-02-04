@@ -3,20 +3,17 @@
 import pricingPencilePattern from '@public/pricing-pencile-pattern.png';
 import { Check, CheckCircle, Loader2, XCircle } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti-boom';
+import { getUserSubscription } from '@/app/actions/subscription';
 import Tabs from '@/components/tabs/Tabs';
 import { Button } from '@/components/ui/button';
-import type { IPlan } from '@/models/plan/plan.types';
+import { useQueryData } from '@/hooks/useQueryData';
+import { authClient } from '@/lib/auth/auth-client';
+import plans from '@/utils/plans';
 
-const PricingSection = ({
-  plans,
-  currentPlanId,
-}: {
-  plans: IPlan[];
-  currentPlanId?: string;
-}) => {
+const PricingSection = ({ session }: { session?: any }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'business'>(
     'personal',
   );
@@ -25,6 +22,16 @@ const PricingSection = ({
   const searchParams = useSearchParams();
   const success = searchParams.get('success');
   const canceled = searchParams.get('canceled');
+
+  const { data: subscriptions } = useQueryData(['user-subscription'], () =>
+    getUserSubscription(),
+  );
+
+  const currentPlan = subscriptions
+    ? subscriptions.find(
+        (sub) => sub.status === 'active' || sub.status === 'trialing',
+      )
+    : undefined;
 
   // Optional clear params after showing
   useEffect(() => {
@@ -40,27 +47,24 @@ const PricingSection = ({
 
   const filteredPlans = plans.filter((plan) => plan.type === activeTab);
 
-  const handleUpgrade = async (plan: IPlan) => {
-    if (plan.name === 'Free' || loadingPlanId) return;
+  const handleUpgrade = async (planName: string) => {
+    if (!session) {
+      redirect('/auth/sign-in');
+    }
+
+    if (planName === 'Free' || loadingPlanId) return;
 
     try {
-      setLoadingPlanId(String(plan._id));
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ planId: plan._id }),
+      setLoadingPlanId(planName);
+
+      await authClient.subscription.upgrade({
+        plan: planName,
+        subscriptionId: currentPlan ? currentPlan?.id : '',
+        referenceId: session?.user?.id,
+        returnUrl: window.location.href,
+        successUrl: window.location.href,
+        cancelUrl: window.location.href,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
     } catch {
       setLoadingPlanId(null);
     }
@@ -128,12 +132,13 @@ const PricingSection = ({
         {/* Cards Container */}
         <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl'>
           {filteredPlans.map((plan) => {
-            const isCurrent = currentPlanId
-              ? String(plan._id) === currentPlanId
+            const isCurrent = currentPlan
+              ? String(plan?.name)?.toLocaleLowerCase() ===
+                String(currentPlan?.plan)?.toLocaleLowerCase()
               : false;
             // If user has a plan, highlight ONLY that plan. Otherwise fallback to recommended.
-            const isHighlighted = currentPlanId ? isCurrent : plan.isPopular;
-            const isLoading = loadingPlanId === String(plan._id);
+            const isHighlighted = currentPlan ? isCurrent : plan.isPopular;
+            const isLoading = loadingPlanId === plan.name;
 
             return (
               <div
@@ -155,7 +160,7 @@ const PricingSection = ({
                     {isCurrent ? 'Current Plan' : 'Recommended'}
                   </div>
                 ) : plan.name === 'Free' ? (
-                  <div className='text-center py-2 text-paragraph font-bold text-sm font-medium'>
+                  <div className='text-center py-2 text-paragraph text-sm font-medium'>
                     Free Trial for 3 Days*
                   </div>
                 ) : (
@@ -189,7 +194,7 @@ const PricingSection = ({
                     <Button
                       variant={isHighlighted ? 'default' : 'outline'}
                       disabled={isCurrent || isLoading || plan.name === 'Free'}
-                      onClick={() => !isCurrent && handleUpgrade(plan)}
+                      onClick={() => !isCurrent && handleUpgrade(plan.name)}
                       className={`w-full rounded-xl h-14 text-lg font-medium transition-all shadow-none cursor-pointer ${
                         isHighlighted
                           ? 'bg-transparent border border-[#3B9DF8] text-[#3B9DF8] hover:bg-[#3B9DF8] hover:text-white'
@@ -221,7 +226,7 @@ const PricingSection = ({
                             key={idx}
                             className='flex items-start gap-3 text-paragraph text-[15px]'
                           >
-                            <Check className='w-5 h-5 text-[#AAAAAA] stroke-[3] mt-0.5 shrink-0' />
+                            <Check className='w-5 h-5 text-[#AAAAAA] stroke-3 mt-0.5 shrink-0' />
                             <span>{feature}</span>
                           </li>
                         ))}

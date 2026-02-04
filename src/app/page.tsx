@@ -8,7 +8,6 @@ import { HeroSection } from '@/components/hero-section';
 import { Navbar } from '@/components/navbar';
 import PricingSection from '@/components/pricing-section';
 import { auth } from '@/lib/auth/auth';
-import { getPlans } from './api/plans/service';
 
 export default async function LandingPage() {
   const session = await auth.api.getSession({
@@ -18,8 +17,6 @@ export default async function LandingPage() {
   if (session) {
     redirect('/dashboard');
   }
-
-  const plans = await getPlans();
 
   return (
     <div
@@ -35,7 +32,7 @@ export default async function LandingPage() {
       <main className='relative z-10'>
         <HeroSection />
         <AboutSection />
-        <PricingSection plans={plans} />
+        <PricingSection />
         <FeatureSection />
         <FaqSection />
       </main>

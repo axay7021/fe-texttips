@@ -3,21 +3,26 @@
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { getUserSubscription } from '@/app/actions/subscription';
 import { Button } from '@/components/ui/button';
+import { useQueryData } from '@/hooks/useQueryData';
 import { cn } from '@/lib/utils';
 import { UserNav } from './user-nav';
 
 interface NavbarProps {
   session: any;
   hideNavigation?: boolean;
-  subscription?: any;
 }
 
-export function Navbar({ session, hideNavigation, subscription }: NavbarProps) {
+export function Navbar({ session, hideNavigation }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const { data: subscription } = useQueryData(['user-subscription'], () =>
+    getUserSubscription(),
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -162,7 +167,7 @@ export function Navbar({ session, hideNavigation, subscription }: NavbarProps) {
 
 function NavbarBrand() {
   return (
-    <div className='flex-shrink-0 flex items-center gap-2'>
+    <div className='shrink-0 flex items-center gap-2'>
       <Link href='/' className='flex items-center gap-2 group'>
         <div className='w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center transition-transform group-hover:scale-105'>
           <span className='text-white font-bold text-lg'>T</span>
@@ -189,7 +194,7 @@ export function NavbarLinks({ className }: { className?: string }) {
           <Link
             key={link.name}
             href={link.href}
-            className='text-[20px] font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors font-normal'
+            className='text-[20px]  text-[#2A2A2A] hover:text-blue-600 transition-colors font-normal'
           >
             {link.name}
           </Link>

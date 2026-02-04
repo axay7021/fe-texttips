@@ -1,19 +1,16 @@
 'use client';
 
 import { useCompletion } from '@ai-sdk/react';
+import type { Subscription } from '@better-auth/stripe';
 import { useEffect, useState } from 'react';
+import { getUserSubscription } from '@/app/actions/subscription';
+import { useQueryData } from '@/hooks/useQueryData';
 import { parseEnhancementResult } from '@/utils/text-enhancer';
 import { EnhancerInput } from './enhancer/enhancer-input';
 import { EnhancerResults } from './enhancer/enhancer-results';
 import type { EnhancedVersion } from './enhancer/types';
 
-interface DashboardTextEnhancerUIProps {
-  isPro?: boolean;
-}
-
-export function DashboardTextEnhancerUI({
-  isPro = false,
-}: DashboardTextEnhancerUIProps) {
+export function DashboardTextEnhancerUI() {
   const [showTip, setShowTip] = useState(true);
   const [usageCount, setUsageCount] = useState(3);
   const maxUsage = 3;
@@ -21,6 +18,15 @@ export function DashboardTextEnhancerUI({
 
   const [parsedVersions, setParsedVersions] = useState<EnhancedVersion[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const { data: subscription } = useQueryData<Subscription[]>(
+    ['user-subscription'],
+    () => getUserSubscription(),
+  );
+
+  const isPro = subscription
+    ? subscription.some((sub) => sub.status === 'active')
+    : false;
 
   const { input, setInput, completion, isLoading, complete } = useCompletion({
     api: '/api/enhance',
