@@ -1,0 +1,31 @@
+name: Next.js CI/CD for Development Branch [Text Tips]
+
+on:
+  push:
+    branches: ['development']
+
+jobs:
+  build:
+    runs-on: fe-texttips dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Add Envrionemnt Variables
+        run: cp /home/ankit/projects/fe-texttips-dev/.env .env
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Application
+        run: pnpm run build

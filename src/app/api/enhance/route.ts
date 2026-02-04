@@ -1,11 +1,10 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
+import config from '@/config';
 
 export async function POST(req: Request) {
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || '';
-
   const google = createGoogleGenerativeAI({
-    apiKey: apiKey,
+    apiKey: config.GEMINI_API_KEY,
   });
 
   try {
@@ -14,11 +13,11 @@ export async function POST(req: Request) {
     console.log('Enhance API Request Body:', body);
 
     // Check if key is present to avoid silent failures
-    if (!apiKey) {
+    if (!config.GEMINI_API_KEY) {
       // biome-ignore lint/suspicious/noConsole: Allow logging
-      console.error('GOOGLE_GENERATIVE_AI_API_KEY is missing in process.env');
+      console.error('GEMINI_API_KEY is missing in process.env');
       return new Response(
-        'Missing Google API Key. Please add GOOGLE_GENERATIVE_AI_API_KEY to your .env file.',
+        'Missing Google API Key. Please add GEMINI_API_KEY to your .env file.',
         { status: 500 },
       );
     }
