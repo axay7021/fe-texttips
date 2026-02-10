@@ -14,16 +14,18 @@ export const getUserSubscription = async () => {
       return [];
     }
 
-    const subscriptions = await auth.api.listActiveSubscriptions({
-      query: {
-        referenceId: session?.user?.id,
-        customerType: 'user',
-      },
-      // This endpoint requires session cookies.
-      headers: await headers(),
-    });
+    // const subscriptions = await auth.api.listActiveSubscriptions({
+    //   query: {
+    //     referenceId: session?.user?.id,
+    //     customerType: 'user',
+    //   },
+    //   // This endpoint requires session cookies.
+    //   headers: await headers(),
+    // });
 
-    return subscriptions as Subscription[];
+    // return subscriptions as Subscription[];
+
+    return [];
   } catch (error) {
     console.log({ error });
     return [];

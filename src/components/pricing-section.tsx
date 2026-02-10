@@ -27,11 +27,13 @@ const PricingSection = ({ session }: { session?: any }) => {
     getUserSubscription(),
   );
 
-  const currentPlan = subscriptions
-    ? subscriptions.find(
-        (sub) => sub.status === 'active' || sub.status === 'trialing',
-      )
-    : undefined;
+  const currentPlan =
+    //  subscriptions
+    // ? subscriptions.find(
+    //     (sub) => sub.status === 'active' || sub.status === 'trialing',
+    //   )
+    // : undefined;
+    undefined;
 
   // Optional clear params after showing
   useEffect(() => {
@@ -48,26 +50,28 @@ const PricingSection = ({ session }: { session?: any }) => {
   const filteredPlans = plans.filter((plan) => plan.type === activeTab);
 
   const handleUpgrade = async (planName: string) => {
-    if (!session) {
-      redirect('/auth/sign-in');
-    }
+    window.location.href = 'mailto:contact@softcolon.com';
 
-    if (planName === 'Free' || loadingPlanId) return;
+    // if (!session) {
+    //   redirect("/auth/sign-in");
+    // }
 
-    try {
-      setLoadingPlanId(planName);
+    // if (planName === "Free" || loadingPlanId) return;
 
-      await authClient.subscription.upgrade({
-        plan: planName,
-        subscriptionId: currentPlan ? currentPlan?.id : '',
-        referenceId: session?.user?.id,
-        returnUrl: window.location.href,
-        successUrl: window.location.href,
-        cancelUrl: window.location.href,
-      });
-    } catch {
-      setLoadingPlanId(null);
-    }
+    // try {
+    //   setLoadingPlanId(planName);
+
+    //   await authClient.subscription.upgrade({
+    //     plan: planName,
+    //     subscriptionId: currentPlan ? currentPlan?.id : '',
+    //     referenceId: session?.user?.id,
+    //     returnUrl: window.location.href,
+    //     successUrl: window.location.href,
+    //     cancelUrl: window.location.href,
+    //   });
+    // } catch {
+    //   setLoadingPlanId(null);
+    // }
   };
 
   return (
@@ -132,10 +136,11 @@ const PricingSection = ({ session }: { session?: any }) => {
         {/* Cards Container */}
         <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl'>
           {filteredPlans.map((plan) => {
-            const isCurrent = currentPlan
-              ? String(plan?.name)?.toLocaleLowerCase() ===
-                String(currentPlan?.plan)?.toLocaleLowerCase()
-              : false;
+            // const isCurrent = currentPlan
+            //   ? String(plan?.name)?.toLocaleLowerCase() ===
+            //     String(currentPlan?.plan)?.toLocaleLowerCase()
+            //   : false;
+            const isCurrent = false;
             // If user has a plan, highlight ONLY that plan. Otherwise fallback to recommended.
             const isHighlighted = currentPlan ? isCurrent : plan.isPopular;
             const isLoading = loadingPlanId === plan.name;
@@ -201,16 +206,17 @@ const PricingSection = ({ session }: { session?: any }) => {
                           : 'border-[#E5E5E5] text-[#AAAAAA] hover:text-gray-600 hover:border-gray-400 hover:bg-gray-50 bg-white'
                       }`}
                     >
-                      {isLoading ? (
+                      {/* {isLoading ? (
                         <>
-                          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Processing...
                         </>
                       ) : isCurrent ? (
-                        'Current Plan'
+                        "Current Plan"
                       ) : (
                         `Upgrade to ${plan.name}`
-                      )}
+                      )} */}
+                      Contact Sales
                     </Button>
                   </div>
 

@@ -1,4 +1,4 @@
-import { stripe } from '@better-auth/stripe';
+// import { stripe } from '@better-auth/stripe';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { nextCookies } from 'better-auth/next-js';
@@ -11,7 +11,7 @@ const client = new MongoClient(
 );
 const db = client.db();
 
-import { STRIPE_PLANS, stripeClient } from '@/lib/stripe';
+// import { STRIPE_PLANS, stripeClient } from '@/lib/stripe';
 import { sendEmailVerificationEmail, sendPasswordResetEmail } from '../email';
 
 export const auth = betterAuth({
@@ -53,18 +53,18 @@ export const auth = betterAuth({
 
   plugins: [
     nextCookies(),
-    stripe({
-      stripeClient,
-      stripeWebhookSecret: config.STRIPE_WEBHOOK_SECRET,
-      createCustomerOnSignUp: true,
-      subscription: {
-        enabled: true,
-        plans: STRIPE_PLANS,
-        authorizeReference: async () => {
-          return true;
-        },
-      },
-    }),
+    // stripe({
+    //   stripeClient,
+    //   stripeWebhookSecret: config.STRIPE_WEBHOOK_SECRET,
+    //   createCustomerOnSignUp: true,
+    //   subscription: {
+    //     enabled: true,
+    //     plans: STRIPE_PLANS,
+    //     authorizeReference: async () => {
+    //       return true;
+    //     },
+    //   },
+    // }),
   ],
 
   database: mongodbAdapter(db, {

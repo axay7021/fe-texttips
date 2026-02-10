@@ -1,12 +1,12 @@
 import type { StripePlan } from '@better-auth/stripe';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 import config from '@/config';
 import plans from '@/utils/plans';
 
-export const stripeClient = new Stripe(config.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-12-15.clover', // Use the latest version from your VS Code autocomplete or Stripe dash
-  typescript: true,
-});
+// export const stripeClient = new Stripe(config.STRIPE_SECRET_KEY, {
+//   apiVersion: '2025-12-15.clover', // Use the latest version from your VS Code autocomplete or Stripe dash
+//   typescript: true,
+// });
 
 const STRIPE_PRODUCT_IDS: Record<string, string> = {
   free: 'price_1SuQ47GZZeG7RU0Jpl7A1KBS',
