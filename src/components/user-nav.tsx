@@ -1,7 +1,6 @@
 'use client';
 
 import { LogOut, Sparkles, User } from 'lucide-react';
-import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -70,14 +69,15 @@ export function UserNav({ user, subscription }: UserNavProps) {
               <User className='mr-2 h-4 w-4' />
               <span>Account</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className='cursor-pointer' asChild>
-              <Link
-                href='/dashboard/upgrade'
-                className='flex items-center w-full'
-              >
-                <Sparkles className='mr-2 h-4 w-4 text-brand-blue' />
-                <span>Upgrade</span>
-              </Link>
+            <DropdownMenuItem
+              className='cursor-pointer'
+              onClick={() => {
+                window.location.href =
+                  'mailto:sales@softcolon.com?subject=Upgrade Inquiry';
+              }}
+            >
+              <Sparkles className='mr-2 h-4 w-4 text-brand-blue' />
+              <span>Contact Sales</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

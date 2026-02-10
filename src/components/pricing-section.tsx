@@ -1,7 +1,7 @@
 'use client';
 
 import pricingPencilePattern from '@public/pricing-pencile-pattern.png';
-import { Check, CheckCircle, Loader2, XCircle } from 'lucide-react';
+import { Check, CheckCircle, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -47,7 +47,7 @@ const PricingSection = ({ session }: { session?: any }) => {
 
   const filteredPlans = plans.filter((plan) => plan.type === activeTab);
 
-  const handleUpgrade = async (planName: string) => {
+  const _handleUpgrade = async (planName: string) => {
     if (!session) {
       redirect('/auth/sign-in');
     }
@@ -56,6 +56,21 @@ const PricingSection = ({ session }: { session?: any }) => {
 
     try {
       setLoadingPlanId(planName);
+
+      if (planName === 'Plus') {
+        // Direct upgrade bypass
+        const { upgradeToPlus } = await import('@/app/actions/subscription');
+        const result = await upgradeToPlus();
+
+        if (result.success) {
+          // Force refresh or redirect to show success
+          router.replace('/dashboard/upgrade?success=true');
+          router.refresh();
+        } else {
+          setLoadingPlanId(null);
+        }
+        return;
+      }
 
       await authClient.subscription.upgrade({
         plan: planName,
@@ -138,7 +153,7 @@ const PricingSection = ({ session }: { session?: any }) => {
               : false;
             // If user has a plan, highlight ONLY that plan. Otherwise fallback to recommended.
             const isHighlighted = currentPlan ? isCurrent : plan.isPopular;
-            const isLoading = loadingPlanId === plan.name;
+            const _isLoading = loadingPlanId === plan.name;
 
             return (
               <div
@@ -192,25 +207,16 @@ const PricingSection = ({ session }: { session?: any }) => {
                     </div>
 
                     <Button
-                      variant={isHighlighted ? 'default' : 'outline'}
-                      disabled={isCurrent || isLoading || plan.name === 'Free'}
-                      onClick={() => !isCurrent && handleUpgrade(plan.name)}
-                      className={`w-full rounded-xl h-14 text-lg font-medium transition-all shadow-none cursor-pointer ${
-                        isHighlighted
-                          ? 'bg-transparent border border-[#3B9DF8] text-[#3B9DF8] hover:bg-[#3B9DF8] hover:text-white'
-                          : 'border-[#E5E5E5] text-[#AAAAAA] hover:text-gray-600 hover:border-gray-400 hover:bg-gray-50 bg-white'
+                      onClick={() => {
+                        window.location.href = `mailto:sales@softcolon.com?subject=Inquiry about ${plan.name} Plan`;
+                      }}
+                      className={`w-full h-12 rounded-xl text-base font-medium transition-all duration-200 ${
+                        plan.isPopular
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-200/50 hover:shadow-blue-300/50 hover:-translate-y-0.5'
+                          : 'bg-white text-gray-900 border-2 border-gray-100 hover:border-blue-200 hover:bg-blue-50/50'
                       }`}
                     >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                          Processing...
-                        </>
-                      ) : isCurrent ? (
-                        'Current Plan'
-                      ) : (
-                        `Upgrade to ${plan.name}`
-                      )}
+                      {isCurrent ? 'Current Plan' : 'Contact Sales'}
                     </Button>
                   </div>
 

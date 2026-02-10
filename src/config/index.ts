@@ -17,6 +17,8 @@ interface Config {
   STRIPE_SECRET_KEY: string;
   STRIPE_PUBLISHABLE_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
+  RAZORPAY_KEY_ID: string;
+  RAZORPAY_KEY_SECRET: string;
 }
 
 const config: Config = {
@@ -54,6 +56,10 @@ const config: Config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
   STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY || '',
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+
+  // Razorpay
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',
 };
 
 export default config;
