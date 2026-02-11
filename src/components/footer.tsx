@@ -27,6 +27,16 @@ const Footer = () => {
           <p>
             &copy; {new Date().getFullYear()} TextTips. All rights reserved.
           </p>
+          <p>
+            Made by{' '}
+            <Link
+              href='https://www.softcolon.com/'
+              target='_blank'
+              className='font-semibold hover:text-brand-blue transition-colors'
+            >
+              Softcolon
+            </Link>
+          </p>
           <div className='flex space-x-6'>
             <Link
               href='/privacy-policy'
