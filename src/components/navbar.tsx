@@ -1,6 +1,7 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { getUserSubscription } from '@/app/actions/subscription';
@@ -72,7 +73,7 @@ export function Navbar({ session, hideNavigation }: NavbarProps) {
       <div className='max-w-8xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div
           className={cn(
-            'flex items-center justify-between h-16 rounded-2xl px-4 lg:px-0 transition-all duration-300',
+            'flex items-center justify-between h-20 rounded-2xl px-4 lg:px-0 transition-all duration-300',
             isScrolled
               ? 'bg-white/30 backdrop-blur-md shadow-sm border border-gray-100/50 lg:px-6' // Scrolled state
               : 'bg-white/30 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none shadow-sm lg:shadow-none border border-gray-100/50 lg:border-none', // Initial state
@@ -169,12 +170,13 @@ function NavbarBrand() {
   return (
     <div className='shrink-0 flex items-center gap-2'>
       <Link href='/' className='flex items-center gap-2 group'>
-        <div className='w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center transition-transform group-hover:scale-105'>
-          <span className='text-white font-bold text-lg'>T</span>
-        </div>
-        <span className='text-2xl font-bold text-[#2A2A2A] tracking-tight group-hover:text-blue-600 transition-colors'>
-          TextTips
-        </span>
+        <Image
+          src='/logo.png'
+          alt='Logo'
+          width={180}
+          height={100}
+          className='max-w-[60%]'
+        />
       </Link>
     </div>
   );

@@ -13,7 +13,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: {
     default: 'Text Tips | AI Text Enhancer',
-    template: '%s | Text Tips',
+    template: 'Text Tips',
   },
   description:
     'Enhance your writing with Text Tips. Professional AI-powered text improvement for clarity, tone, and grammar.',

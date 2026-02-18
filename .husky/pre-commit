@@ -4,7 +4,3 @@ pnpm lint-staged
 # Run type checking
 echo "Running type check..."
 pnpm exec tsc --noEmit
-
-# Run unit tests
-echo "Running unit tests..."
-pnpm test

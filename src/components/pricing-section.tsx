@@ -1,16 +1,15 @@
 'use client';
 
 import pricingPencilePattern from '@public/pricing-pencile-pattern.png';
-import { Check, CheckCircle, Loader2, XCircle } from 'lucide-react';
+import { Check, CheckCircle, XCircle } from 'lucide-react';
 import Image from 'next/image';
-import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti-boom';
 import { getUserSubscription } from '@/app/actions/subscription';
 import Tabs from '@/components/tabs/Tabs';
 import { Button } from '@/components/ui/button';
 import { useQueryData } from '@/hooks/useQueryData';
-import { authClient } from '@/lib/auth/auth-client';
 import plans from '@/utils/plans';
 
 const PricingSection = ({ session }: { session?: any }) => {
@@ -90,7 +89,7 @@ const PricingSection = ({ session }: { session?: any }) => {
       <div className='absolute top-0 left-0 w-full h-full pointer-events-none z-0'></div>
 
       {/* Pencile pattern */}
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full'>
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[1200px] opacity-60'>
         <Image
           src={pricingPencilePattern}
           alt='Pencil Pattern'
@@ -134,7 +133,7 @@ const PricingSection = ({ session }: { session?: any }) => {
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Cards Container */}
-        <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl'>
+        <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl h-auto md:h-[494px]'>
           {filteredPlans.map((plan) => {
             // const isCurrent = currentPlan
             //   ? String(plan?.name)?.toLocaleLowerCase() ===
