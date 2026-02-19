@@ -27,11 +27,12 @@ const PricingSection = ({ session }: { session?: any }) => {
     getUserSubscription(),
   );
 
-  const currentPlan = subscriptions
-    ? subscriptions.find(
-        (sub) => sub.status === 'active' || sub.status === 'trialing',
-      )
-    : undefined;
+  const currentPlan =
+    subscriptions && subscriptions.length > 0
+      ? subscriptions.find(
+          (sub) => sub.status === 'active' || sub.status === 'trialing',
+        )
+      : undefined;
 
   // Optional clear params after showing
   useEffect(() => {
@@ -52,11 +53,13 @@ const PricingSection = ({ session }: { session?: any }) => {
       redirect('/auth/sign-in');
     }
 
-    if (planName === 'Free' || loadingPlanId) return;
+    // if (!session) {
+    //   redirect("/auth/sign-in");
+    // }
+
+    // if (planName === "Free" || loadingPlanId) return;
 
     try {
-      setLoadingPlanId(planName);
-
       if (planName === 'Plus') {
         // Direct upgrade bypass
         const { upgradeToPlus } = await import('@/app/actions/subscription');
@@ -101,7 +104,7 @@ const PricingSection = ({ session }: { session?: any }) => {
       <div className='absolute top-0 left-0 w-full h-full pointer-events-none z-0'></div>
 
       {/* Pencile pattern */}
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full'>
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[1200px] opacity-60'>
         <Image
           src={pricingPencilePattern}
           alt='Pencil Pattern'
@@ -145,7 +148,7 @@ const PricingSection = ({ session }: { session?: any }) => {
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Cards Container */}
-        <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl'>
+        <div className='flex flex-wrap justify-center items-stretch gap-5 w-full max-w-7xl h-auto md:h-[494px]'>
           {filteredPlans.map((plan) => {
             const isCurrent = currentPlan
               ? String(plan?.name)?.toLocaleLowerCase() ===

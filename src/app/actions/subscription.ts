@@ -14,14 +14,15 @@ export const getUserSubscription = async () => {
       return [];
     }
 
-    const subscriptions = await auth.api.listActiveSubscriptions({
-      query: {
-        referenceId: session?.user?.id,
-        customerType: 'user',
-      },
-      // This endpoint requires session cookies.
-      headers: await headers(),
-    });
+    // const subscriptions = await auth.api.listActiveSubscriptions({
+    //   query: {
+    //     referenceId: session?.user?.id,
+    //     customerType: 'user',
+    //   },
+    //   // This endpoint requires session cookies.
+    //   headers: await headers(),
+    // });
+    const subscriptions: Subscription[] = [];
 
     // Validated against custom Subscription model
     const SubscriptionModel = (await import('@/models/subscription.model'))
@@ -33,19 +34,27 @@ export const getUserSubscription = async () => {
 
     if (customSub) {
       // Map custom subscription to Better Auth Subscription interface shape
-      const mappedSub = {
+      const mappedSub: Subscription = {
         id: customSub._id.toString(),
-        status: customSub.status,
+        status:
+          customSub.status === 'cancelled'
+            ? 'canceled'
+            : (customSub.status as
+                | 'active'
+                | 'canceled'
+                | 'past_due'
+                | 'unpaid'
+                | 'trialing'
+                | 'paused'
+                | 'incomplete'
+                | 'incomplete_expired'),
         plan: customSub.planId,
         periodStart: customSub.currentPeriodStart,
         periodEnd: customSub.currentPeriodEnd,
         referenceId: session.user.id,
-        customerId: session.user.id,
-        startDate: customSub.startDate,
-        endDate: customSub.endDate,
       };
 
-      return [mappedSub, ...subscriptions] as unknown as Subscription[];
+      return [mappedSub, ...subscriptions];
     }
 
     // If no custom subscription and no Better Auth subscription, auto-provision trial
@@ -68,18 +77,26 @@ export const getUserSubscription = async () => {
         endDate: oneMonthLater,
       });
 
-      const mappedNewSub = {
+      const mappedNewSub: Subscription = {
         id: newSub._id.toString(),
-        status: newSub.status,
+        status:
+          newSub.status === 'cancelled'
+            ? 'canceled'
+            : (newSub.status as
+                | 'active'
+                | 'canceled'
+                | 'past_due'
+                | 'unpaid'
+                | 'trialing'
+                | 'paused'
+                | 'incomplete'
+                | 'incomplete_expired'),
         plan: newSub.planId,
         periodStart: newSub.currentPeriodStart,
         periodEnd: newSub.currentPeriodEnd,
         referenceId: session.user.id,
-        customerId: session.user.id,
-        startDate: newSub.startDate,
-        endDate: newSub.endDate,
       };
-      return [mappedNewSub] as unknown as Subscription[];
+      return [mappedNewSub];
     }
 
     return subscriptions as Subscription[];

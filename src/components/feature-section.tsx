@@ -3,7 +3,7 @@
 import cartoonCharacter from '@public/cartoon-character.png';
 import chromeIcon from '@public/chrome-icon.png';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const FeatureSection = () => {
   return (
@@ -28,7 +28,11 @@ const FeatureSection = () => {
             Make your browser smarter with powerful AI tools built right inside
             Chrome. Install in seconds and start working faster today.
           </p>
-          <Button className='bg-black text-white group rounded-full mt-6 text-[18px] h-auto px-6 py-3 cursor-pointer flex items-center gap-2 mx-auto md:mx-0'>
+          <Link
+            target='_blank'
+            href='https://chromewebstore.google.com/detail/text-tips-rewrite-enhance/dandccdiknfjlhcofajmflbmnkbkakji'
+            className='bg-black w-fit text-white group rounded-full mt-6 text-[18px] h-auto px-6 py-3 cursor-pointer flex items-center gap-2 mx-auto md:mx-0'
+          >
             <Image
               src={chromeIcon}
               alt='chrome-icon'
@@ -37,7 +41,7 @@ const FeatureSection = () => {
               height={20}
             />
             Install Chrome Extension
-          </Button>
+          </Link>
         </div>
 
         <Image

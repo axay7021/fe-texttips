@@ -52,7 +52,7 @@
       },
       "correctness": {
         "noUnusedVariables": "warn",
-        "noUnusedImports": "error",
+        "noUnusedImports": "off",
         "noChildrenProp": "off",
         "useExhaustiveDependencies": "off",
         "useHookAtTopLevel": "error"

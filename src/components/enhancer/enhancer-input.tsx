@@ -61,12 +61,12 @@ export function EnhancerInput({
         onChange={(e) => setText(e.target.value)}
         placeholder='Add your text here to enhance it...'
         maxLength={maxLength}
-        className='w-full flex-1 resize-none border-none outline-none text-[18px] text-[#1a1a1a] placeholder:text-gray-300 bg-transparent font-normal leading-relaxed'
+        className='w-full flex-1 resize-none border border-transparent focus:border-blue-100 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none text-[18px] text-[#1a1a1a] placeholder:text-gray-400 bg-gray-50 rounded-2xl p-6 font-normal leading-relaxed transition-all duration-200'
         spellCheck={false}
       />
 
       {/* Footer Area */}
-      <div className='flex flex-col md:flex-row items-center justify-between mt-6 gap-4 border-t border-gray-50 pt-4 md:border-none md:pt-0'>
+      <div className='flex flex-col md:flex-row items-center justify-between mt-6 gap-4 border-t border-gray-100 pt-6'>
         {/* Left Side: Char Count + Usage Badge */}
         <div className='flex items-center gap-6 w-full md:w-auto'>
           <span className='text-gray-300 text-sm font-medium'>

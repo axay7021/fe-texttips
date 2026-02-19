@@ -32,7 +32,7 @@ export default async function Dashboard() {
 
   return (
     <HydrationBoundary state={dehydrate(query)}>
-      <div className='min-h-screen relative overflow-hidden bg-white'>
+      <div className='min-h-screen relative overflow-hidden bg-gray-50'>
         {/* Background Elements */}
         <div className='absolute inset-0 pointer-events-none z-0'>
           <BackgroundAnimation />
