@@ -16,7 +16,7 @@ export function HeroSection() {
       <div className='w-full mx-auto h-full flex flex-col justify-center items-center relative z-10'>
         <div className='max-w-[806px] mx-auto flex flex-col items-center space-y-[18px]'>
           <h2 className='text-brand-blue font-normal tracking-wide uppercase text-xs md:text-[26px]'>
-            <span className='lowercase'>TextTips.ai</span> makes content fast &
+            <span className='lowercase'>TextTips</span> makes content fast &
             easy
           </h2>
           <h1 className='text-[clamp(40px,9vw,100px)] font-bold text-heading leading-[0.9] md:leading-[1] tracking-tight'>
@@ -36,7 +36,7 @@ export function HeroSection() {
           </Link>
         </div>
 
-        <div className='w-full max-w-[1120px] mx-auto pt-20'>
+        <div className='w-full max-w-[1120px] mx-auto pt-20 z-100'>
           <TextEnhancerUI />
         </div>
       </div>

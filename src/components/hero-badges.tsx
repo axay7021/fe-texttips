@@ -73,7 +73,7 @@ export function HeroBadges() {
             key={badge.id}
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{
-              opacity: 1,
+              opacity: 0.7,
               scale: 1,
               y: [0, -10, 0],
             }}

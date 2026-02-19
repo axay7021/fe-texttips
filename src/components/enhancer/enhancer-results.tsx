@@ -22,37 +22,39 @@ export function EnhancerResults({
   // If we have parsed versions, show cards
   if (parsedVersions.length > 0) {
     return (
-      <div className='grid grid-cols-1 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-lg mx-auto md:max-w-none md:grid-cols-2'>
+      <div className='flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full'>
         {parsedVersions.map((version, index) => (
           <div
             // biome-ignore lint/suspicious/noArrayIndexKey: List is static for this render
             key={index}
-            className='bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col gap-3 group relative'
+            className='bg-white rounded-lg p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 md:gap-4 group relative'
           >
-            <div className='flex items-center justify-between border-b border-gray-50 pb-2'>
-              <div className='flex items-center gap-2 text-sm font-bold text-gray-700 uppercase tracking-wider'>
-                <span className='text-lg'>{version.icon}</span>
-                {version.title}
-              </div>
-
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => copyToClipboard(version.text, index)}
-                className='h-8 w-8 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity'
-              >
-                {copiedIndex === index ? (
-                  <Check className='w-4 h-4' />
-                ) : (
-                  <Copy className='w-4 h-4' />
-                )}
-                <span className='sr-only'>Copy</span>
-              </Button>
+            <div className='flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-700 uppercase tracking-wider min-w-fit'>
+              <span className='text-sm md:text-base'>{version.icon}</span>
+              {version.title}
             </div>
 
-            <div className='text-gray-600 leading-relaxed min-h-[40px]'>
+            <div className='hidden md:block w-px h-6 bg-gray-100 mx-1'></div>
+            {/* Mobile divider */}
+            <div className='block md:hidden w-px h-6 bg-gray-100 mx-1'></div>
+
+            <div className='text-gray-600 text-sm leading-relaxed flex-1 break-words'>
               {version.text}
             </div>
+
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => copyToClipboard(version.text, index)}
+              className='h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 opacity-100 transition-opacity'
+            >
+              {copiedIndex === index ? (
+                <Check className='w-4 h-4' />
+              ) : (
+                <Copy className='w-4 h-4' />
+              )}
+              <span className='sr-only'>Copy</span>
+            </Button>
           </div>
         ))}
       </div>
