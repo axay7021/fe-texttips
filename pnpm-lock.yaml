@@ -86,6 +86,9 @@ importers:
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      razorpay:
+        specifier: ^2.9.6
+        version: 2.9.6
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -2744,6 +2747,9 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  razorpay@2.9.6:
+    resolution: {integrity: sha512-zsHAQzd6e1Cc6BNoCNZQaf65ElL6O6yw0wulxmoG5VQDr363fZC90Mp1V5EktVzG45yPyNomNXWlf4cQ3622gQ==}
 
   react-confetti-boom@2.0.1:
     resolution: {integrity: sha512-1Uy3JY8czl6yvIAICb+1xLCHLWtUqdNj16ebYBGc5YunGzR4yiP6wSvwYPBeEGZ6/ZjHWgXyVmdDW1ssbpC/Mg==}
@@ -5863,6 +5869,12 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.7
       '@types/react-dom': 19.2.3(@types/react@19.2.7)
+
+  razorpay@2.9.6:
+    dependencies:
+      axios: 1.13.4
+    transitivePeerDependencies:
+      - debug
 
   react-confetti-boom@2.0.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:

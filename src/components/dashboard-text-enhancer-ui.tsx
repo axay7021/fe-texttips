@@ -1,10 +1,9 @@
 'use client';
 
 import { useCompletion } from '@ai-sdk/react';
-import type { Subscription } from '@better-auth/stripe';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { getUserSubscription } from '@/app/actions/subscription';
-import { useQueryData } from '@/hooks/useQueryData';
 import { parseEnhancementResult } from '@/utils/text-enhancer';
 import { EnhancerInput } from './enhancer/enhancer-input';
 import { EnhancerResults } from './enhancer/enhancer-results';
@@ -12,24 +11,31 @@ import type { EnhancedVersion } from './enhancer/types';
 
 export function DashboardTextEnhancerUI() {
   const [showTip, setShowTip] = useState(true);
-  const [usageCount, setUsageCount] = useState(3);
-  const maxUsage = 3;
   const maxLength = 2000;
 
   const [parsedVersions, setParsedVersions] = useState<EnhancedVersion[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const { data: subscription } = useQueryData<Subscription[]>(
-    ['user-subscription'],
-    () => getUserSubscription(),
-  );
+  // Fetch Usage Limit
+  const { data: usageData, refetch: refetchUsage } = useQuery({
+    queryKey: ['user-limit'],
+    queryFn: async () => {
+      const res = await axios.get('/api/user/limit');
+      return res.data;
+    },
+  });
 
-  const isPro = subscription
-    ? subscription.some((sub) => sub.status === 'active')
-    : false;
+  const maxUsage = usageData ? usageData.limit : 3;
+  // Calculate remaining locally for display logic or use from API
+  const remaining = usageData ? usageData.remaining : 3;
+  const isPro = usageData?.type === 'subscription';
 
   const { input, setInput, completion, isLoading, complete } = useCompletion({
     api: '/api/enhance',
+    onFinish: () => {
+      // Refetch usage after completion to update count
+      refetchUsage();
+    },
   });
 
   // Real-time parsing of the stream
@@ -44,9 +50,9 @@ export function DashboardTextEnhancerUI() {
   const handleRewrite = () => {
     if (!input.trim()) return;
 
-    if (!isPro) {
-      if (usageCount <= 0) return;
-      setUsageCount((prev) => prev - 1);
+    if (remaining <= 0 && !isPro) {
+      // Optional: Trigger upgrade modal or alert
+      return;
     }
 
     setParsedVersions([]);
@@ -76,7 +82,7 @@ export function DashboardTextEnhancerUI() {
         handleRewrite={handleRewrite}
         isLoading={isLoading}
         isPro={isPro}
-        usageCount={usageCount}
+        usageCount={remaining} // Passing remaining as "usageCount" for display if that's what the component expects
         showTip={showTip}
         setShowTip={setShowTip}
         maxLength={maxLength}
