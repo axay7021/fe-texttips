@@ -133,44 +133,73 @@ export async function POST(req: Request) {
       return new Response('Missing prompt', { status: 400 });
     }
 
-    const systemPrompt = `You are a text enhancement expert. Your task is to rewrite the user's text in 6 distinct styles. You must provide all 6 versions in a single response.
+    const REQUIRED_TONES = [
+      'Professional',
+      'Friendly',
+      'Concise',
+      'Polished',
+      'Clear',
+      'Confident',
+    ] as const;
 
-    Styles:
-    1. Professional
-    2. Friendly
-    3. Concise
-    4. Polished
-    5. Clear
-    6. Confident
+    const systemPrompt = `You are a text enhancement expert. Your ONLY task is to rewrite the user's text in exactly 6 distinct styles.
 
-    Formatting Rules:
-    - Use labels followed by a colon (e.g. Professional:)
-    - ALWAYS put the rewritten text on a NEW LINE after the label.
-    - Do NOT use markdown bold (asterisks) for the labels.
-    - Separate each version with a blank line.
-    - Do not include any preamble or extra chatter.
-    
-    Example Output:
-    Professional:
-    I hope this email finds you well.
+CRITICAL RULES — You MUST follow ALL of these:
+1. You MUST output ALL 6 styles. Never skip any. The 6 styles are: ${REQUIRED_TONES.join(', ')}.
+2. Each label MUST be written EXACTLY as shown above — capitalize the first letter, no bold/asterisks, no extra words.
+3. Each label MUST be followed by a colon and nothing else on that line.
+4. The rewritten text MUST start on the NEXT LINE after the label.
+5. Separate each style block with exactly ONE blank line.
+6. Do NOT add any preamble, commentary, or explanation before, between, or after the blocks.
+7. Do NOT use markdown formatting (no **, no ##, no bullets).
+8. If the input is gibberish or unclear, still provide all 6 rewrites with your best interpretation.
 
-    Friendly:
-    Hey there! Hope you're doing great.
-    
-    (etc)`;
+EXACT FORMAT (follow this precisely):
+Professional:
+[rewritten text]
+
+Friendly:
+[rewritten text]
+
+Concise:
+[rewritten text]
+
+Polished:
+[rewritten text]
+
+Clear:
+[rewritten text]
+
+Confident:
+[rewritten text]`;
 
     const result = streamText({
       model: google('gemini-2.5-flash-lite'),
+      temperature: 0.4, // Lower temperature for consistent formatting
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
+        {
+          role: 'user',
+          content: `Rewrite this text in all 6 styles: "${userPrompt}"`,
+        },
       ],
       onError: ({ error }) => {
         // biome-ignore lint/suspicious/noConsole: Allow logging
         console.error('Stream Error:', error);
       },
-      // biome-ignore lint/suspicious/noConsole: Allow logging
-      onFinish: ({ text }) => console.log('Stream Finished:', text),
+      onFinish: ({ text: finishedText }) => {
+        // biome-ignore lint/suspicious/noConsole: Allow logging
+        console.log('Stream Finished:', finishedText);
+
+        // Validate that all 6 tones are present in the output
+        const missingTones = REQUIRED_TONES.filter(
+          (tone) => !new RegExp(`${tone}:\\s*\\n`, 'i').test(finishedText),
+        );
+        if (missingTones.length > 0) {
+          // biome-ignore lint/suspicious/noConsole: Allow logging
+          console.warn('Missing tones in AI output:', missingTones);
+        }
+      },
     });
 
     result.usage.then((usages) => {

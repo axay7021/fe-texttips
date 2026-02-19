@@ -1,6 +1,8 @@
 'use client';
 
 import { useCompletion } from '@ai-sdk/react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IoSparkles } from 'react-icons/io5';
@@ -11,7 +13,6 @@ import { parseEnhancementResult } from '@/utils/text-enhancer';
 
 export function TextEnhancerUI() {
   const [text, setText] = useState('');
-  const [credits, setCredits] = useState<number>(3);
   const [parsedVersions, setParsedVersions] = useState<EnhancedVersion[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showResults, setShowResults] = useState(false);
@@ -21,24 +22,29 @@ export function TextEnhancerUI() {
   const maxLength = 50;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Load credits from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedCredits = localStorage.getItem('text-enhancer-credits');
-      if (savedCredits !== null) {
-        setCredits(parseInt(savedCredits, 10));
-      } else {
-        localStorage.setItem('text-enhancer-credits', '3');
-        setCredits(3);
-      }
-    }
-  }, []);
+  // Fetch Usage Limit
+  const { data: usageData, refetch: refetchUsage } = useQuery({
+    queryKey: ['user-limit-hero'],
+    queryFn: async () => {
+      const res = await axios.get('/api/user/limit');
+      return res.data;
+    },
+    // Don't refetch on window focus to avoid jumping numbers if not needed often
+    refetchOnWindowFocus: false,
+  });
+
+  const credits = usageData ? usageData.remaining : 3;
+  const isPro = usageData?.type === 'subscription';
 
   const { complete, completion, isLoading } = useCompletion({
     api: '/api/enhance',
     onError: (error) => {
       // biome-ignore lint/suspicious/noConsole: Log error for debugging
       console.error('Enhancement error:', error);
+    },
+    onFinish: () => {
+      // Refetch usage after completion to update count
+      refetchUsage();
     },
   });
 
@@ -56,20 +62,18 @@ export function TextEnhancerUI() {
   }, [completion, showResults]);
 
   const handleRewrite = useCallback(() => {
-    if (!text.trim() || credits <= 0) return;
+    if (!text.trim()) return;
 
-    // Decrement credits
-    const newCredits = credits - 1;
-    setCredits(newCredits);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('text-enhancer-credits', newCredits.toString());
-    }
+    // Backend will enforce limit, but client-side check prevents call
+    if (credits <= 0 && !isPro) return;
 
+    // setText is already updating state
+    // No need to manually decrement credits, backend handles it and we refetch
     // setShowResults(true); // Moved to useEffect
     setParsedVersions([]);
     hasSwitchedRef.current = false;
     complete(text);
-  }, [text, credits, complete]);
+  }, [text, credits, isPro, complete]);
 
   const handleReset = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -89,7 +93,7 @@ export function TextEnhancerUI() {
     }
   };
 
-  const isOutOfCredits = credits <= 0;
+  const isOutOfCredits = credits <= 0 && !isPro;
 
   if (showResults) {
     return (
@@ -107,23 +111,89 @@ export function TextEnhancerUI() {
         />
 
         <div className='flex flex-col items-center gap-3 mt-4'>
-          <Button
-            onClick={handleReset}
-            className='bg-white hover:bg-gray-50 text-brand-blue border border-brand-blue/20 rounded-full px-8 h-12 text-base font-medium shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2'
-          >
-            <IoSparkles className='w-4 h-4' />
-            Enhance New Content
-          </Button>
+          {!isOutOfCredits ? (
+            <Button
+              onClick={handleReset}
+              className='bg-white hover:bg-gray-50 text-brand-blue border border-brand-blue/20 rounded-full px-8 h-12 text-base font-medium shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2'
+            >
+              <IoSparkles className='w-4 h-4' />
+              Enhance New Content
+            </Button>
+          ) : (
+            <Link href='/auth/sign-in'>
+              <Button className='bg-brand-blue hover:bg-blue-600 text-white rounded-full px-8 h-12 text-base font-medium shadow-lg shadow-blue-200/50 transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2'>
+                <IoSparkles className='w-4 h-4' />
+                Login to Enhance More
+              </Button>
+            </Link>
+          )}
+
           <div className='flex flex-col items-center gap-1'>
             <p className='text-gray-400 text-sm font-medium'>
-              {credits} free rewrites remaining
+              {isPro ? 'Unlimited' : credits}{' '}
+              {isPro ? 'access' : 'free rewrites remaining'}
             </p>
-            <Link
-              href='/auth/sign-in'
-              className='text-brand-blue text-sm hover:underline font-medium'
-            >
-              Log in for unlimited access
+            {!isPro && !isOutOfCredits && (
+              <Link
+                href='/auth/sign-in'
+                className='text-brand-blue text-sm hover:underline font-medium'
+              >
+                Log in for unlimited access
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isOutOfCredits) {
+    return (
+      <div
+        ref={containerRef}
+        className='w-full max-w-xl mx-auto relative z-20 flex flex-col gap-6 mb-10'
+      >
+        <div className='bg-white rounded-3xl shadow-[0_16px_16px_-8px_#CCE5FF] border border-[#D9ECFF] p-8 flex flex-col items-center justify-center text-center gap-5 transition-all'>
+          <div className='w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-brand-blue mb-1'>
+            <IoSparkles className='w-8 h-8' />
+          </div>
+
+          <div className='space-y-2 max-w-sm'>
+            <h3 className='text-2xl font-bold text-gray-900'>
+              Free Limit Reached
+            </h3>
+            <p className='text-gray-500 text-base leading-relaxed'>
+              You've used your free enhancements. Log in now to unlock unlimited
+              access and take your writing to the next level.
+            </p>
+          </div>
+
+          <div className='flex flex-col gap-3 w-full max-w-xs mt-2'>
+            <Link href='/auth/sign-in' className='w-full'>
+              <Button className='w-full bg-brand-blue hover:bg-blue-600 text-white rounded-full h-12 text-base font-medium shadow-lg shadow-blue-200/50 transition-all hover:-translate-y-0.5'>
+                Log In for Unlimited Access
+              </Button>
             </Link>
+            <div className='text-center mt-2'>
+              <p className='text-gray-500 text-sm font-medium opacity-80'>
+                ✨ Join thousands of users enhancing their writing daily.
+              </p>
+            </div>
+            {/* Development only */}
+            {process.env.NODE_ENV === 'development' && (
+              <Button
+                size='sm'
+                variant='destructive'
+                onClick={async () => {
+                  await axios.post('/api/test/reset-limit');
+                  refetchUsage();
+                }}
+                className='mt-2'
+              >
+                Reset Limit (Dev Test)
+              </Button>
+            )}
+            {/* Development only */}
           </div>
         </div>
       </div>
@@ -179,7 +249,7 @@ export function TextEnhancerUI() {
       </div>
 
       <div className='text-center mt-2'>
-        {text.length >= maxLength * 0.8 && (
+        {text.length >= maxLength * 0.8 && !isPro && (
           <Link
             href='/auth/sign-in'
             className='text-sm text-brand-blue hover:underline font-medium block mb-2'
@@ -194,9 +264,10 @@ export function TextEnhancerUI() {
               credits > 0 ? 'text-brand-blue' : 'text-red-500'
             }`}
           >
-            {credits} free rewrites
+            {isPro ? 'Unlimited' : credits} {isPro ? 'access' : 'free rewrites'}
           </span>{' '}
-          remaining. No credit card required.
+          {isPro ? 'enabled' : 'remaining'}.{' '}
+          {!isPro && 'No credit card required.'}
         </p>
       </div>
     </div>

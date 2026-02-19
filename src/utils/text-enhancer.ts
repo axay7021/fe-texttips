@@ -2,37 +2,49 @@ import { type EnhancedVersion, STYLE_ICONS } from '@/components/enhancer/types';
 
 /**
  * Parses the raw AI completion text into structured EnhancedVersion objects.
- * The text format is expected to be "Label:\nContent" blocks.
+ * Handles multiple formatting variations:
+ * - "Label:\nContent" (normal)
+ * - "Label: Content" (same line)
+ * - "**Label:**\nContent" (markdown bold)
+ * - Case insensitive matching
  */
 export function parseEnhancementResult(completion: string): EnhancedVersion[] {
   if (!completion) return [];
 
   const styleKeys = Object.keys(STYLE_ICONS);
 
-  // Regex matches: (Label):\n(Content) until next label or end
-  // Pattern: (Professional|Friendly|...):\s*\n([content])
-  // Using lookahead for next label or end of string
-  const pattern = `(?:^|\\n)(${styleKeys.join('|')}):\\s*\\n([\\s\\S]*?)(?=(?:\\n(?:${styleKeys.join('|')}):)|$)`;
-  const regex = new RegExp(pattern, 'gi');
+  // Clean up any markdown bold formatting: **Label:** → Label:
+  const cleaned = completion.replace(/\*\*/g, '');
 
   const versions: EnhancedVersion[] = [];
-  let match: RegExpExecArray | null;
 
-  while ((match = regex.exec(completion)) !== null) {
-    const titleRaw = match[1];
-    const contentRaw = match[2].trim();
+  for (let i = 0; i < styleKeys.length; i++) {
+    const currentKey = styleKeys[i];
 
-    // Find canonical key
-    const key = styleKeys.find(
-      (k) => k.toLowerCase() === titleRaw.toLowerCase(),
-    );
+    // Build regex to find "Label:" (case insensitive) and capture everything until next label or end
+    // Supports both "Label:\n content" and "Label: content" (same line)
+    const nextLabels = styleKeys
+      .filter((k) => k.toLowerCase() !== currentKey.toLowerCase())
+      .join('|');
 
-    if (key && contentRaw) {
-      versions.push({
-        title: key,
-        text: contentRaw,
-        icon: STYLE_ICONS[key],
-      });
+    const labelPattern = nextLabels
+      ? new RegExp(
+          `${currentKey}:\\s*([\\s\\S]*?)(?=(?:${nextLabels}):|$)`,
+          'i',
+        )
+      : new RegExp(`${currentKey}:\\s*([\\s\\S]*)$`, 'i');
+
+    const match = labelPattern.exec(cleaned);
+
+    if (match) {
+      const content = match[1].trim();
+      if (content) {
+        versions.push({
+          title: currentKey,
+          text: content,
+          icon: STYLE_ICONS[currentKey],
+        });
+      }
     }
   }
 
