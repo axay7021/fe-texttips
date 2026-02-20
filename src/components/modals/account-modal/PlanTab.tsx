@@ -112,8 +112,8 @@ export function PlanTab({ subscription, onClose: _onClose }: PlanTabProps) {
         <h4 className='font-semibold text-gray-900 mb-4 flex items-center gap-2'>
           <History className='w-4 h-4' /> Billing History
         </h4>
-        <div className='border border-gray-100 rounded-xl overflow-hidden'>
-          <table className='w-full text-sm text-left'>
+        <div className='border border-gray-100 rounded-xl overflow-x-auto hide-scrollbar'>
+          <table className='w-full min-w-[500px] text-sm text-left'>
             <thead className='bg-gray-50 text-gray-500 font-medium'>
               <tr>
                 <th className='px-4 py-3'>Date</th>

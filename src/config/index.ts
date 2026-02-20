@@ -23,8 +23,8 @@ interface Config {
 
 const config: Config = {
   // Environment
-  NODE_ENV: (process.env.NODE_ENV as Environment) || 'development',
-  ENV_TYPE: (process.env.ENV_TYPE as Environment) || 'development',
+  NODE_ENV: process.env.NODE_ENV as Environment,
+  ENV_TYPE: process.env.ENV_TYPE as Environment,
 
   // Better Auth
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || '',

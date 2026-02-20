@@ -75,7 +75,7 @@ export function Navbar({ session, hideNavigation }: NavbarProps) {
           className={cn(
             'flex items-center justify-between h-20 rounded-2xl px-4 lg:px-0 transition-all duration-300',
             isScrolled
-              ? 'bg-white/30 backdrop-blur-md shadow-sm border border-gray-100/50 lg:px-6' // Scrolled state
+              ? 'bg-white/50 backdrop-blur-xl shadow-sm border border-gray-100/50 lg:px-6' // Scrolled state
               : 'bg-white/30 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none shadow-sm lg:shadow-none border border-gray-100/50 lg:border-none', // Initial state
           )}
         >
@@ -84,80 +84,86 @@ export function Navbar({ session, hideNavigation }: NavbarProps) {
           {/* Desktop Links */}
           {!hideNavigation && <NavbarLinks className='hidden lg:flex' />}
 
-          {/* Desktop Actions */}
-          <div className='hidden lg:block'>
-            <NavbarActions session={session} subscription={subscription} />
-          </div>
+          {/* Right Section / Actions */}
+          <div className='flex items-center gap-2 sm:gap-4'>
+            {/* Desktop Actions (and Mobile if hideNavigation is active) */}
+            <div className={cn(hideNavigation ? 'block' : 'hidden lg:block')}>
+              <NavbarActions session={session} subscription={subscription} />
+            </div>
 
-          {/* Mobile Menu Button */}
-          <div className='lg:hidden'>
-            <button
-              type='button'
-              ref={buttonRef}
-              onClick={() => setIsOpen(!isOpen)}
-              className='p-2 text-gray-600 hover:text-blue-600 transition-colors'
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Mobile Menu Button - Only show if we actually have navigation links to toggle */}
+            {!hideNavigation && (
+              <div className='lg:hidden'>
+                <button
+                  type='button'
+                  ref={buttonRef}
+                  onClick={() => setIsOpen(!isOpen)}
+                  className='p-2 text-gray-700 hover:text-blue-600 transition-colors bg-white/50 hover:bg-gray-100/80 rounded-lg shadow-sm backdrop-blur-md'
+                >
+                  {isOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      {isOpen && (
+      {isOpen && !hideNavigation && (
         <div
           ref={menuRef}
-          className='absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 lg:hidden flex flex-col gap-6 animate-in slide-in-from-top-5 duration-200'
+          className='absolute top-24 left-4 right-4 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/60 p-6 lg:hidden flex flex-col gap-6 animate-in slide-in-from-top-5 duration-200 z-50'
         >
-          {!hideNavigation && (
-            <div className='flex flex-col gap-4'>
-              <Link
-                href='/#home'
-                onClick={() => setIsOpen(false)}
-                className='text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors'
-              >
-                Home
-              </Link>
-              <Link
-                href='/#extension'
-                onClick={() => setIsOpen(false)}
-                className='text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors'
-              >
-                Extension
-              </Link>
-              <Link
-                href='/#pricing'
-                onClick={() => setIsOpen(false)}
-                className='text-lg font-medium text-[#2A2A2A] hover:text-blue-600 transition-colors'
-              >
-                Pricing
-              </Link>
-            </div>
-          )}
+          <div className='flex flex-col gap-4'>
+            <Link
+              href='/#home'
+              onClick={() => setIsOpen(false)}
+              className='text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors'
+            >
+              Home
+            </Link>
+            <Link
+              href='/#extension'
+              onClick={() => setIsOpen(false)}
+              className='text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors'
+            >
+              Extension
+            </Link>
+            <Link
+              href='/#pricing'
+              onClick={() => setIsOpen(false)}
+              className='text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors'
+            >
+              Pricing
+            </Link>
+          </div>
 
-          <div className='h-px bg-gray-100 w-full' />
+          <div className='h-px bg-gray-200 w-full' />
 
           <div className='flex flex-col gap-3'>
             {session ? (
-              <div className='flex justify-start'>
-                <UserNav user={session.user} subscription={subscription} />
+              <div className='flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100'>
+                <div className='flex items-center gap-3'>
+                  <UserNav user={session.user} subscription={subscription} />
+                  <span className='font-medium text-gray-800'>My Account</span>
+                </div>
               </div>
             ) : (
-              <>
+              <div className='flex flex-col gap-3'>
                 <Link href='/auth/sign-in' onClick={() => setIsOpen(false)}>
                   <Button
                     variant='outline'
-                    className='w-full border-brand-blue text-brand-blue rounded-[8px] hover:bg-brand-blue/10 justify-center h-12 text-lg'
+                    className='w-full border-brand-blue text-brand-blue rounded-xl hover:bg-brand-blue/10 justify-center h-12 text-lg font-medium'
                   >
                     Sign in
                   </Button>
                 </Link>
                 <Link href='/auth/sign-up' onClick={() => setIsOpen(false)}>
-                  <Button className='w-full bg-brand-blue hover:bg-blue-400 text-white rounded-[8px] justify-center h-12 text-lg shadow-md'>
+                  <Button className='w-full bg-brand-blue hover:bg-blue-500 text-white rounded-xl shadow-md justify-center h-12 text-lg font-medium'>
                     Get Started
                   </Button>
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

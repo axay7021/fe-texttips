@@ -35,15 +35,17 @@ export function ProfileTab({ user }: ProfileTabProps) {
       <div className='space-y-6'>
         <div className='space-y-2'>
           <p className='text-sm font-medium text-gray-700'>Display Name</p>
-          <div className='flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50'>
-            <span className='text-gray-900 font-medium'>{user.name}</span>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50'>
+            <span className='text-gray-900 font-medium break-all'>
+              {user.name}
+            </span>
           </div>
         </div>
 
         <div className='space-y-2'>
           <p className='text-sm font-medium text-gray-700'>Email Address</p>
-          <div className='flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50'>
-            <span className='text-gray-900'>{user.email}</span>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50'>
+            <span className='text-gray-900 break-all'>{user.email}</span>
             <div className='flex items-center gap-2 text-green-600 bg-green-50 px-2.5 py-1 rounded-full text-xs font-medium'>
               <CheckCircle className='w-3.5 h-3.5' />
               Verified

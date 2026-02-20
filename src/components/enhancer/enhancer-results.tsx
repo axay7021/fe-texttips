@@ -27,26 +27,45 @@ export function EnhancerResults({
           <div
             // biome-ignore lint/suspicious/noArrayIndexKey: List is static for this render
             key={index}
-            className='bg-white rounded-lg p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 md:gap-4 group relative'
+            className='bg-white rounded-lg p-3 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 group relative'
           >
-            <div className='flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-700 uppercase tracking-wider min-w-fit'>
-              <span className='text-sm md:text-base'>{version.icon}</span>
-              {version.title}
+            {/* Header / Top part for Mobile, Left part for Desktop */}
+            <div className='flex items-center justify-between w-full sm:w-auto'>
+              <div className='flex items-center gap-2 text-[11px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider sm:w-[130px] md:w-[140px] shrink-0 justify-start'>
+                <span className='text-sm sm:text-base'>{version.icon}</span>
+                {version.title}
+              </div>
+
+              {/* Copy button Top Right on mobile */}
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => copyToClipboard(version.text, index)}
+                className='sm:hidden h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 transition-colors'
+              >
+                {copiedIndex === index ? (
+                  <Check className='w-4 h-4' />
+                ) : (
+                  <Copy className='w-4 h-4' />
+                )}
+                <span className='sr-only'>Copy</span>
+              </Button>
             </div>
 
-            <div className='hidden md:block w-px h-6 bg-gray-100 mx-1'></div>
-            {/* Mobile divider */}
-            <div className='block md:hidden w-px h-6 bg-gray-100 mx-1'></div>
+            {/* Vertical Divider (Hidden on Mobile) */}
+            <div className='hidden sm:block w-px h-8 bg-gray-200 mx-1 shrink-0'></div>
 
-            <div className='text-gray-600 text-sm leading-relaxed flex-1 break-words'>
+            {/* Text Content */}
+            <div className='text-gray-600 text-[13px] sm:text-sm leading-relaxed flex-1 break-words pb-1 sm:py-1'>
               {version.text}
             </div>
 
+            {/* Copy button Right side on desktop */}
             <Button
               variant='ghost'
               size='sm'
               onClick={() => copyToClipboard(version.text, index)}
-              className='h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 opacity-100 transition-opacity'
+              className='hidden sm:flex h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 opacity-100 transition-opacity'
             >
               {copiedIndex === index ? (
                 <Check className='w-4 h-4' />

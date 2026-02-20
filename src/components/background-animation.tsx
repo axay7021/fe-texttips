@@ -45,7 +45,7 @@ export function BackgroundAnimation() {
         })}
       </div>
       {/* Background Pattern */}
-      <div className='absolute inset-0 pointer-events-none opacity-0.7'>
+      <div className='absolute inset-0 pointer-events-none opacity-0.7 '>
         <Image
           src={heroImage}
           alt='Hero Pattern'

@@ -4,6 +4,7 @@ import { useCompletion } from '@ai-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { parseEnhancementResult } from '@/utils/text-enhancer';
 import { EnhancerInput } from './enhancer/enhancer-input';
 import { EnhancerResults } from './enhancer/enhancer-results';
@@ -30,13 +31,33 @@ export function DashboardTextEnhancerUI() {
   const remaining = usageData ? usageData.remaining : 3;
   const isPro = usageData?.type === 'subscription';
 
-  const { input, setInput, completion, isLoading, complete } = useCompletion({
-    api: '/api/enhance',
-    onFinish: () => {
-      // Refetch usage after completion to update count
-      refetchUsage();
-    },
-  });
+  const { input, setInput, completion, setCompletion, isLoading, complete } =
+    useCompletion({
+      api: '/api/enhance',
+      onError: (error) => {
+        // biome-ignore lint/suspicious/noConsole: Log error for debugging
+        console.error('Enhancement error:', error);
+        const errorStr = error?.message || '';
+
+        if (
+          errorStr.toLowerCase().includes('quota') ||
+          errorStr.toLowerCase().includes('rate limit') ||
+          errorStr.toLowerCase().includes('429')
+        ) {
+          toast.error(
+            'AI provider generation limits reached. Please try again later.',
+          );
+        } else {
+          toast.error(
+            'An error occurred while enhancing your text. Please try again.',
+          );
+        }
+      },
+      onFinish: () => {
+        // Refetch usage after completion to update count
+        refetchUsage();
+      },
+    });
 
   // Real-time parsing of the stream
   useEffect(() => {
@@ -57,6 +78,13 @@ export function DashboardTextEnhancerUI() {
 
     setParsedVersions([]);
     complete(input);
+  };
+
+  const handleReset = () => {
+    setInput('');
+    if (setCompletion) setCompletion('');
+    setParsedVersions([]);
+    setCopiedIndex(null);
   };
 
   const copyToClipboard = async (content: string, index: number) => {
@@ -87,6 +115,8 @@ export function DashboardTextEnhancerUI() {
         setShowTip={setShowTip}
         maxLength={maxLength}
         maxUsage={maxUsage}
+        hasResults={parsedVersions.length > 0 || (!!completion && !isLoading)}
+        handleReset={handleReset}
       />
 
       <EnhancerResults

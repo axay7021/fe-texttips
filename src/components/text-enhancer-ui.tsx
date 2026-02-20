@@ -6,9 +6,11 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IoSparkles } from 'react-icons/io5';
+import { toast } from 'sonner';
 import { EnhancerResults } from '@/components/enhancer/enhancer-results';
 import type { EnhancedVersion } from '@/components/enhancer/types';
 import { Button } from '@/components/ui/button';
+import config from '@/config';
 import { parseEnhancementResult } from '@/utils/text-enhancer';
 
 export function TextEnhancerUI() {
@@ -19,11 +21,15 @@ export function TextEnhancerUI() {
   const hasSwitchedRef = useRef(false);
 
   /* Limit for guests */
-  const maxLength = 50;
+  const maxLength = 100;
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Fetch Usage Limit
-  const { data: usageData, refetch: refetchUsage } = useQuery({
+  const {
+    data: usageData,
+    refetch: refetchUsage,
+    isPending,
+  } = useQuery({
     queryKey: ['user-limit-hero'],
     queryFn: async () => {
       const res = await axios.get('/api/user/limit');
@@ -41,6 +47,21 @@ export function TextEnhancerUI() {
     onError: (error) => {
       // biome-ignore lint/suspicious/noConsole: Log error for debugging
       console.error('Enhancement error:', error);
+      const errorStr = error?.message || '';
+
+      if (
+        errorStr.toLowerCase().includes('quota') ||
+        errorStr.toLowerCase().includes('rate limit') ||
+        errorStr.toLowerCase().includes('429')
+      ) {
+        toast.error(
+          'AI provider generation limits reached. Please try again later.',
+        );
+      } else {
+        toast.error(
+          'An error occurred while enhancing your text. Please try again.',
+        );
+      }
     },
     onFinish: () => {
       // Refetch usage after completion to update count
@@ -94,6 +115,23 @@ export function TextEnhancerUI() {
   };
 
   const isOutOfCredits = credits <= 0 && !isPro;
+
+  if (isPending) {
+    return (
+      <div className='w-full max-w-xl mx-auto relative z-20 flex flex-col gap-6 animate-pulse'>
+        <div className='bg-white rounded-3xl shadow-[0_16px_16px_-8px_#CCE5FF] border border-[#D9ECFF] p-5 flex flex-col relative h-[142px]'>
+          <div className='w-full h-10 bg-gray-50 rounded-xl mb-auto'></div>
+          <div className='flex items-center justify-between mt-4'>
+            <div className='w-12 h-4 bg-gray-100 rounded text-[16px]'></div>
+            <div className='bg-gray-100 rounded-full w-[100px] h-[46px]'></div>
+          </div>
+        </div>
+        <div className='text-center mt-2'>
+          <div className='h-4 bg-gray-100 rounded w-64 mx-auto'></div>
+        </div>
+      </div>
+    );
+  }
 
   if (showResults) {
     return (
@@ -208,7 +246,7 @@ export function TextEnhancerUI() {
       <div className='bg-white rounded-3xl shadow-[0_16px_16px_-8px_#CCE5FF] border border-[#D9ECFF] p-5 flex flex-col relative transition-all hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)]'>
         <textarea
           value={text}
-          rows={4}
+          rows={2}
           onChange={(e) => setText(e.target.value)}
           placeholder='I trust this message finds you well. How are you?'
           maxLength={maxLength}

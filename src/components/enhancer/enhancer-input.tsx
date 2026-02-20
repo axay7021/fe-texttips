@@ -16,6 +16,8 @@ interface EnhancerInputProps {
   setShowTip: (show: boolean) => void;
   maxLength: number;
   maxUsage: number;
+  hasResults?: boolean;
+  handleReset?: () => void;
 }
 
 export function EnhancerInput({
@@ -29,6 +31,8 @@ export function EnhancerInput({
   setShowTip,
   maxLength,
   maxUsage,
+  hasResults,
+  handleReset,
 }: EnhancerInputProps) {
   return (
     <div className='bg-white rounded-[24px] shadow-[0_16px_16px_-8px_#CCE5FF] border border-gray-100 p-6 md:p-8 flex flex-col relative min-h-[400px]'>
@@ -66,69 +70,85 @@ export function EnhancerInput({
       />
 
       {/* Footer Area */}
-      <div className='flex flex-col md:flex-row items-center justify-between mt-6 gap-4 border-t border-gray-100 pt-6'>
+      <div className='flex flex-row items-center justify-between mt-auto border-t border-gray-100 pt-6'>
         {/* Left Side: Char Count + Usage Badge */}
-        <div className='flex items-center gap-6 w-full md:w-auto'>
-          <span className='text-gray-300 text-sm font-medium'>
+        <div className='flex items-center gap-3 md:gap-6'>
+          <span className='text-gray-400 text-sm md:text-base font-medium'>
             {text.length} / {maxLength}
           </span>
 
           {isPro ? (
-            <div className='flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full text-brand-blue border border-blue-100'>
-              <Zap className='w-3.5 h-3.5 fill-current' />
-              <span className='text-xs font-bold uppercase tracking-wide'>
+            <div className='flex items-center gap-1.5 md:gap-2 bg-blue-50 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-brand-blue border border-blue-100'>
+              <Zap className='w-3 h-3 md:w-3.5 md:h-3.5 fill-current' />
+              <span className='text-[10px] md:text-xs font-bold uppercase tracking-wide hidden sm:inline-block'>
                 Pro Active
               </span>
-              <span className='text-gray-300 mx-1'>|</span>
-              <InfinityIcon className='w-3.5 h-3.5' />
-              <span className='text-xs font-semibold'>Unlimited</span>
+              <span className='text-[10px] md:text-xs font-bold uppercase tracking-wide sm:hidden'>
+                Pro
+              </span>
+              <span className='text-gray-300 mx-0.5 md:mx-1'>|</span>
+              <InfinityIcon className='w-3 h-3 md:w-3.5 md:h-3.5' />
+              <span className='text-[10px] md:text-xs font-semibold hidden sm:inline-block'>
+                Unlimited
+              </span>
             </div>
           ) : (
-            <div className='flex items-center gap-2 bg-[#F0F7FF] px-3 py-1.5 rounded-full'>
-              <div className='flex gap-1'>
+            <div className='flex items-center gap-2 bg-[#F0F7FF] px-2.5 py-1 md:px-3 md:py-1.5 rounded-full'>
+              <div className='flex gap-1 hidden sm:flex'>
                 {[...Array(maxUsage)].map((_, i) => (
                   <div
                     // biome-ignore lint/suspicious/noArrayIndexKey: Static usage dots
                     key={i}
-                    className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-colors duration-300 ${
                       i < usageCount ? 'bg-brand-blue' : 'bg-blue-200/40'
                     }`}
                   ></div>
                 ))}
               </div>
-              <span className='text-brand-blue text-xs font-bold ml-1'>
-                {usageCount} / {maxUsage} free
+              <span className='text-brand-blue text-[10px] md:text-xs font-bold ml-0.5 md:ml-1'>
+                {usageCount} / {maxUsage}{' '}
+                <span className='hidden md:inline-block'>free</span>
               </span>
             </div>
           )}
         </div>
 
         {/* Right Side: Rewrite Button */}
-        <Button
-          onClick={handleRewrite}
-          disabled={
-            (!isPro && usageCount === 0) || text.length === 0 || isLoading
-          }
-          className={cn(
-            'rounded-xl w-full md:w-auto py-6 px-8 font-medium shadow-lg transition-all text-lg cursor-pointer flex items-center justify-center gap-2',
-            !isPro && usageCount === 0
-              ? 'bg-gray-100 text-gray-400 shadow-none cursor-not-allowed'
-              : 'bg-brand-blue hover:bg-blue-600 text-white shadow-blue-200/50 hover:shadow-blue-300/50 hover:-translate-y-0.5',
-          )}
-        >
-          {isLoading ? (
-            <Loader2 className='w-5 h-5 animate-spin' />
-          ) : (
-            <IoSparkles className='w-5 h-5' />
-          )}
-          <span>
-            {isLoading
-              ? 'Enhancing...'
-              : !isPro && usageCount === 0
-                ? 'Limit Reached'
-                : 'Enhance Text'}
-          </span>
-        </Button>
+        {hasResults ? (
+          <Button
+            onClick={handleReset}
+            className='rounded-full md:rounded-xl w-[46px] h-[46px] p-0 md:w-auto md:py-6 md:px-8 font-medium shadow-sm transition-all text-base md:text-lg cursor-pointer flex items-center justify-center relative bg-white text-brand-blue border border-brand-blue hover:bg-blue-50 hover:-translate-y-0.5'
+          >
+            <IoSparkles className='w-5 h-5 absolute md:relative md:mr-2' />
+            <span className='hidden md:block'>+ New Rewrite</span>
+          </Button>
+        ) : (
+          <Button
+            onClick={handleRewrite}
+            disabled={
+              (!isPro && usageCount === 0) || text.length === 0 || isLoading
+            }
+            className={cn(
+              'rounded-full md:rounded-xl w-[46px] h-[46px] p-0 md:w-auto md:py-6 md:px-8 font-medium shadow-lg transition-all text-base md:text-lg cursor-pointer flex items-center justify-center relative',
+              !isPro && usageCount === 0
+                ? 'bg-gray-100 text-gray-400 shadow-none cursor-not-allowed'
+                : 'bg-brand-blue hover:bg-blue-600 text-white shadow-blue-200/50 hover:shadow-blue-300/50 hover:-translate-y-0.5',
+            )}
+          >
+            {isLoading ? (
+              <Loader2 className='w-5 h-5 animate-spin absolute md:relative md:mr-2' />
+            ) : (
+              <IoSparkles className='w-5 h-5 absolute md:relative md:mr-2' />
+            )}
+            <span className='hidden md:block'>
+              {isLoading
+                ? 'Enhancing...'
+                : !isPro && usageCount === 0
+                  ? 'Limit Reached'
+                  : 'Enhance Text'}
+            </span>
+          </Button>
+        )}
       </div>
     </div>
   );
