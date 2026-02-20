@@ -56,7 +56,7 @@ export function EnhancerResults({
             <div className='hidden sm:block w-px h-8 bg-gray-200 mx-1 shrink-0'></div>
 
             {/* Text Content */}
-            <div className='text-gray-600 text-[13px] sm:text-sm leading-relaxed flex-1 break-words pb-1 sm:py-1'>
+            <div className='text-gray-600 text-[13px] text-left sm:text-sm leading-relaxed flex-1 break-words pb-1 sm:py-1'>
               {version.text}
             </div>
 

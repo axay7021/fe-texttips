@@ -11,6 +11,8 @@ interface Config {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   GEMINI_API_KEY: string;
+  ANTHROPIC_API_KEY: string;
+  OPENAI_API_KEY: string;
   MONGODB_URI: string;
   SMTP_USER: string;
   SMTP_PASSWORD: string;
@@ -44,6 +46,8 @@ const config: Config = {
 
   // LLM
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
 
   // Database
   MONGODB_URI: process.env.MONGODB_URI || '',

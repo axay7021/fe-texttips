@@ -2,6 +2,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { headers } from 'next/headers';
 import config from '@/config';
+import { getAIModel } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth/auth';
 import dbConnect from '@/lib/mongodb';
 import DailyUsage from '@/models/daily-usage.model';
@@ -173,8 +174,9 @@ Clear:
 Confident:
 [rewritten text]`;
 
+    console.log(getAIModel());
     const result = streamText({
-      model: google('gemini-3.1-pro-preview'),
+      model: getAIModel(),
       temperature: 0.4, // Lower temperature for consistent formatting
       messages: [
         { role: 'system', content: systemPrompt },
