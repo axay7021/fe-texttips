@@ -248,6 +248,14 @@ export function TextEnhancerUI() {
           value={text}
           rows={2}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (!isLoading && text.trim() && !isOutOfCredits) {
+                handleRewrite();
+              }
+            }
+          }}
           placeholder='I trust this message finds you well. How are you?'
           maxLength={maxLength}
           className='w-full flex-1 resize-none border-none outline-none text-[16px] text-[#000000] placeholder:text-gray-400 bg-transparent font-normal'

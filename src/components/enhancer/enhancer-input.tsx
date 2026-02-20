@@ -63,6 +63,14 @@ export function EnhancerInput({
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!isLoading && text.trim() && (isPro || usageCount > 0)) {
+              handleRewrite();
+            }
+          }
+        }}
         placeholder='Add your text here to enhance it...'
         maxLength={maxLength}
         className='w-full flex-1 resize-none border border-transparent focus:border-blue-100 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none text-[18px] text-[#1a1a1a] placeholder:text-gray-400 bg-gray-50 rounded-2xl p-6 font-normal leading-relaxed transition-all duration-200'
