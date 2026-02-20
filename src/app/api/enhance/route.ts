@@ -174,7 +174,7 @@ Confident:
 [rewritten text]`;
 
     const result = streamText({
-      model: google('gemini-2.5-flash-lite'),
+      model: google('gemini-3.1-pro-preview'),
       temperature: 0.4, // Lower temperature for consistent formatting
       messages: [
         { role: 'system', content: systemPrompt },
