@@ -66,7 +66,7 @@ const badges = [
 
 export function HeroBadges() {
   return (
-    <div className='absolute inset-0 pointer-events-none hidden xl:block overflow-hidden'>
+    <div className='absolute max-h-screen inset-0 pointer-events-none hidden xl:block overflow-hidden'>
       <div className='relative w-full h-full mx-auto'>
         {badges.map((badge) => (
           <motion.div
