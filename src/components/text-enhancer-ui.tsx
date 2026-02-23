@@ -139,6 +139,15 @@ export function TextEnhancerUI() {
         ref={containerRef}
         className='w-full max-w-xl mx-auto relative z-20 flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700'
       >
+        <div className='bg-white rounded-3xl shadow-[0_8px_16px_-8px_#CCE5FF] border border-[#D9ECFF] p-5 flex flex-col relative'>
+          <p className='text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2'>
+            Original Text
+          </p>
+          <p className='text-[16px] text-gray-800 font-normal whitespace-pre-wrap leading-relaxed'>
+            {text}
+          </p>
+        </div>
+
         <EnhancerResults
           parsedVersions={parsedVersions}
           isLoading={isLoading}
@@ -166,7 +175,7 @@ export function TextEnhancerUI() {
             </Link>
           )}
 
-          <div className='flex flex-col items-center gap-1'>
+          <div className='flex flex-col items-center gap-1 mb-6'>
             <p className='text-gray-400 text-sm font-medium'>
               {isPro ? 'Unlimited' : credits}{' '}
               {isPro ? 'access' : 'free rewrites remaining'}

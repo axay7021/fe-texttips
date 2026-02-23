@@ -3,6 +3,7 @@
 import { useCompletion } from '@ai-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseEnhancementResult } from '@/utils/text-enhancer';
@@ -18,7 +19,11 @@ export function DashboardTextEnhancerUI() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   // Fetch Usage Limit
-  const { data: usageData, refetch: refetchUsage } = useQuery({
+  const {
+    data: usageData,
+    refetch: refetchUsage,
+    isLoading: isUsageLoading,
+  } = useQuery({
     queryKey: ['user-limit'],
     queryFn: async () => {
       const res = await axios.get('/api/user/limit');
@@ -68,6 +73,19 @@ export function DashboardTextEnhancerUI() {
     }
   }, [completion]);
 
+  if (isUsageLoading) {
+    return (
+      <div className='fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center animate-in fade-in duration-300'>
+        <div className='flex flex-col items-center gap-4'>
+          <Loader2 className='animate-spin text-brand-blue w-10 h-10' />
+          <p className='text-gray-500 font-medium text-lg'>
+            Loading workspace...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const handleRewrite = () => {
     if (!input.trim()) return;
 
@@ -103,7 +121,7 @@ export function DashboardTextEnhancerUI() {
   };
 
   return (
-    <div className='w-full mx-auto relative z-20 flex flex-col gap-6'>
+    <div className='w-full mx-auto relative z-20 flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-5 duration-700'>
       <EnhancerInput
         text={input}
         setText={setInput}

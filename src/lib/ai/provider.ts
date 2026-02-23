@@ -28,7 +28,7 @@ export function getAIModel() {
         apiKey: config.OPENAI_API_KEY,
       });
 
-      return openai('gpt-4o-mini');
+      return openai('o4-mini');
     }
 
     default: {

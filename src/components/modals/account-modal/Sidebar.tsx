@@ -12,7 +12,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         Settings
       </h2>
 
-      <div className='flex flex-row sm:flex-col gap-2 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar'>
+      <div className='flex flex-row sm:flex-col gap-2 overflow-x-auto pb-2 hide-scrollbar'>
         <button
           type='button'
           onClick={() => setActiveTab('profile')}

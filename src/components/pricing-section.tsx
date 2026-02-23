@@ -3,21 +3,20 @@
 import pricingPencilePattern from '@public/pricing-pencile-pattern.png';
 import { Check, CheckCircle, XCircle } from 'lucide-react';
 import Image from 'next/image';
-import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti-boom';
 import { getUserSubscription } from '@/app/actions/subscription';
 import Tabs from '@/components/tabs/Tabs';
 import { Button } from '@/components/ui/button';
 import { useQueryData } from '@/hooks/useQueryData';
-import { authClient } from '@/lib/auth/auth-client';
 import plans from '@/utils/plans';
 
-const PricingSection = ({ session }: { session?: any }) => {
+const PricingSection = ({ session: _session }: { session?: any }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'business'>(
     'personal',
   );
-  const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
+  const [loadingPlanId, _setLoadingPlanId] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const success = searchParams.get('success');
@@ -47,46 +46,6 @@ const PricingSection = ({ session }: { session?: any }) => {
   }, [success, canceled, router]);
 
   const filteredPlans = plans.filter((plan) => plan.type === activeTab);
-
-  const _handleUpgrade = async (planName: string) => {
-    if (!session) {
-      redirect('/auth/sign-in');
-    }
-
-    // if (!session) {
-    //   redirect("/auth/sign-in");
-    // }
-
-    // if (planName === "Free" || loadingPlanId) return;
-
-    try {
-      if (planName === 'Plus') {
-        // Direct upgrade bypass
-        const { upgradeToPlus } = await import('@/app/actions/subscription');
-        const result = await upgradeToPlus();
-
-        if (result.success) {
-          // Force refresh or redirect to show success
-          router.replace('/dashboard/upgrade?success=true');
-          router.refresh();
-        } else {
-          setLoadingPlanId(null);
-        }
-        return;
-      }
-
-      await authClient.subscription.upgrade({
-        plan: planName,
-        subscriptionId: currentPlan ? currentPlan?.id : '',
-        referenceId: session?.user?.id,
-        returnUrl: window.location.href,
-        successUrl: window.location.href,
-        cancelUrl: window.location.href,
-      });
-    } catch {
-      setLoadingPlanId(null);
-    }
-  };
 
   return (
     <section
@@ -161,16 +120,28 @@ const PricingSection = ({ session }: { session?: any }) => {
             return (
               <div
                 key={plan.name}
+                className={`
+                  group
+                  rounded-[20px] 
+                  p-1.5 
+                  h-full 
+                  overflow-hidden 
+                  w-full 
+                  max-w-[400px]
+                  flex flex-col 
+                  relative
+                  transition-all duration-300 ease-in-out
+                  ${
+                    isHighlighted
+                      ? 'transform md:-translate-y-4 hover:md:-translate-y-5 shadow-2xl shadow-blue-200/50 hover:shadow-blue-300/60'
+                      : 'transform hover:-translate-y-2 shadow-lg hover:shadow-xl hover:shadow-blue-200/30'
+                  }
+              `}
                 style={{
                   background: isHighlighted
                     ? '#3B9DF8'
                     : 'linear-gradient(125deg,rgba(215, 215, 215, 1) 0%, rgba(249, 249, 249, 1) 84%)',
                 }}
-                className={`rounded-[20px] h-auto! p-1.5 ${
-                  isHighlighted
-                    ? 'flex flex-col relative shadow-xl shadow-blue-200 md:-translate-y-6'
-                    : 'flex flex-col relative'
-                } h-full overflow-hidden w-full max-w-[400px]`}
               >
                 {/* Optional Banner */}
                 {isHighlighted ? (

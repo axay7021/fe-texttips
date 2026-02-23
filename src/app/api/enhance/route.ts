@@ -11,7 +11,7 @@ import Subscription from '@/models/subscription.model';
 export async function POST(req: Request) {
   await dbConnect();
 
-  const google = createGoogleGenerativeAI({
+  const _google = createGoogleGenerativeAI({
     apiKey: config.GEMINI_API_KEY,
   });
 
@@ -173,8 +173,6 @@ Clear:
 
 Confident:
 [rewritten text]`;
-
-    console.log(getAIModel());
     const result = streamText({
       model: getAIModel(),
       temperature: 0.4, // Lower temperature for consistent formatting

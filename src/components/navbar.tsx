@@ -175,7 +175,14 @@ export function Navbar({ session, hideNavigation }: NavbarProps) {
 function NavbarBrand() {
   return (
     <div className='shrink-0 flex items-center gap-2'>
-      <Link href='/' className='flex items-center gap-2 group'>
+      <Link
+        href='/'
+        onClick={(e) => {
+          e.preventDefault();
+          window.location.href = '/';
+        }}
+        className='flex items-center gap-2 group'
+      >
         <Image
           src='/logo.png'
           alt='Logo'

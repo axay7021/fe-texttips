@@ -44,7 +44,7 @@ export default async function Dashboard() {
 
         {/* Main Content Area */}
         <main className='relative z-10 flex flex-col items-center justify-start min-h-[calc(100vh-80px)] px-4 pb-20 pt-30 md:pt-32'>
-          <div className='w-full max-w-[1120px] mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700'>
+          <div className='w-full max-w-[1120px] mx-auto'>
             <DashboardTextEnhancerUI />
           </div>
         </main>
