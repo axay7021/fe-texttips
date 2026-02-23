@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, Sparkles, User } from 'lucide-react';
+import { LogOut, Mail, Sparkles, User } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -90,7 +90,7 @@ export function UserNav({ user, subscription }: UserNavProps) {
                   'mailto:sales@softcolon.com?subject=Upgrade Inquiry';
               }}
             >
-              <Sparkles className='mr-2 h-4 w-4 text-brand-blue' />
+              <Mail className='mr-2 h-4 w-4' />
               <span>Contact Sales</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>

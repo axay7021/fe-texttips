@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className='bg-white border-t border-gray-100 mt-auto'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 pb-12'>
         {/* Top Section */}
-        <div className='flex flex-col sm:flex-row justify-between items-center gap-6'>
+        <div className='flex flex-row justify-between items-center gap-6'>
           <div className='shrink-0 flex items-center'>
             <Link href='/' className='flex items-center gap-2 group'>
               <Image
