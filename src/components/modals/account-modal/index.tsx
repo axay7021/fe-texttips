@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -27,15 +28,17 @@ export function AccountModal({
 }: AccountModalProps) {
   const [activeTab, setActiveTab] = useState('profile');
   const [mounted, setMounted] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Reset tab when modal opens
+  // Reset tab and fetch latest usage data when modal opens
   useEffect(() => {
     if (isOpen) {
       setActiveTab('profile');
+      queryClient.invalidateQueries({ queryKey: ['user-limit'] });
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -43,7 +46,7 @@ export function AccountModal({
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, queryClient]);
 
   if (!isOpen || !mounted) return null;
 

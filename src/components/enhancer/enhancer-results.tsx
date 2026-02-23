@@ -23,11 +23,20 @@ export function EnhancerResults({
   if (parsedVersions.length > 0) {
     return (
       <div className='flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full'>
+        <p className='text-xs text-center text-gray-500 font-medium mb-1 -mt-2'>
+          Click any result to copy to clipboard
+        </p>
         {parsedVersions.map((version, index) => (
-          <div
+          <button
+            type='button'
             // biome-ignore lint/suspicious/noArrayIndexKey: List is static for this render
             key={index}
-            className='bg-white rounded-lg p-3 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 group relative'
+            onClick={() => copyToClipboard(version.text, index)}
+            className={`bg-white rounded-lg p-3 sm:p-4 border shadow-sm transition-all flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 group relative cursor-pointer outline-none active:scale-[0.99] text-left ${
+              copiedIndex === index
+                ? 'border-brand-blue bg-blue-50/50'
+                : 'border-gray-100 hover:border-brand-blue/50 hover:shadow-md'
+            }`}
           >
             {/* Header / Top part for Mobile, Left part for Desktop */}
             <div className='flex items-center justify-between w-full sm:w-auto'>
@@ -40,8 +49,15 @@ export function EnhancerResults({
               <Button
                 variant='ghost'
                 size='sm'
-                onClick={() => copyToClipboard(version.text, index)}
-                className='sm:hidden h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 transition-colors'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyToClipboard(version.text, index);
+                }}
+                className={`sm:hidden h-8 w-8 shrink-0 cursor-pointer p-0 transition-colors ${
+                  copiedIndex === index
+                    ? 'text-brand-blue bg-blue-100'
+                    : 'text-gray-400 group-hover:text-brand-blue group-hover:bg-blue-50'
+                }`}
               >
                 {copiedIndex === index ? (
                   <Check className='w-4 h-4' />
@@ -56,25 +72,32 @@ export function EnhancerResults({
             <div className='hidden sm:block w-px h-8 bg-gray-200 mx-1 shrink-0'></div>
 
             {/* Text Content */}
-            <div className='text-gray-600 text-[13px] text-left sm:text-sm leading-relaxed flex-1 break-words pb-1 sm:py-1'>
+            <div className='text-gray-600 text-[13px] text-left sm:text-sm leading-relaxed flex-1 break-words pb-1 sm:py-1 group-hover:text-gray-900 transition-colors'>
               {version.text}
             </div>
 
             {/* Copy button Right side on desktop */}
             <Button
-              variant='ghost'
+              variant='ghost' // keeping inner button strictly for visual feedback mapping to desktop, outer is the real click map
               size='sm'
-              onClick={() => copyToClipboard(version.text, index)}
-              className='hidden sm:flex h-8 w-8 shrink-0 cursor-pointer p-0 text-gray-400 hover:text-brand-blue hover:bg-blue-50 opacity-100 transition-opacity'
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard(version.text, index);
+              }}
+              className={`hidden sm:flex h-8 w-8 shrink-0 cursor-pointer p-0 transition-colors ${
+                copiedIndex === index
+                  ? 'text-brand-blue bg-blue-100'
+                  : 'text-gray-400 group-hover:text-brand-blue group-hover:bg-blue-50'
+              }`}
             >
               {copiedIndex === index ? (
                 <Check className='w-4 h-4' />
               ) : (
-                <Copy className='w-4 h-4' />
+                <Copy className='w-4 h-4 text-gray-300 group-hover:text-brand-blue transition-colors' />
               )}
               <span className='sr-only'>Copy</span>
             </Button>
-          </div>
+          </button>
         ))}
       </div>
     );
