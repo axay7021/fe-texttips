@@ -1,5 +1,5 @@
 import ellipseCircle from '@public/ellipse-circle.png';
-import extensionPic from '@public/extension-pic.png';
+import extensionPic from '@public/styles.png';
 import whiteArrow from '@public/white-arrow.png';
 import Image from 'next/image';
 
@@ -13,18 +13,20 @@ const ParagraphRewriteCard = () => {
       }}
     >
       <div className='space-y-3 max-w-full min-[1080px]:max-w-[533px] w-full min-[1080px]:w-auto z-10'>
+        <p className='text-brand-blue font-bold tracking-wider text-sm uppercase'>
+          Multiple Styles
+        </p>
         <h1 className='text-2xl min-[1080px]:text-[36px] font-bold text-heading'>
-          Rewrite individual paragraphs
+          Find the perfect tone
         </h1>
         <p className='text-paragraph text-base min-[1080px]:text-[20px] font-normal'>
-          With the Scribbr Paragraph Rewriter, you can easily rewrite individual
-          paragraphs.
+          Whether you need your email to sound more professional, friendly,
+          concise, or polished, TextTips has you covered.
         </p>
-        <ul className='list-disc list-inside text-paragraph text-base min-[1080px]:text-[20px] ml-5 mt-5'>
-          <li>Create diverse headlines</li>
-          <li>Rewrite an email</li>
-          <li>Create unique social media captions</li>
-        </ul>
+        <p className='text-paragraph text-base min-[1080px]:text-[20px] font-normal'>
+          Choose from predefined styles to perfectly match your audience and
+          rewrite instantly.
+        </p>
       </div>
       {/* Mobile Image - Only extensionPic */}
       <div className='relative w-full flex justify-center mb-6 min-[1080px]:hidden'>

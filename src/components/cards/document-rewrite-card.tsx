@@ -1,6 +1,6 @@
 import ellipseCircle from '@public/ellipse-circle.png';
-import extensionPic2 from '@public/extension-pic-2.png';
 import heroBgPattern from '@public/hero-bg-pattern.png';
+import extensionPic2 from '@public/workflow.png';
 import Image from 'next/image';
 
 const DocumentRewriteCard = () => {
@@ -47,17 +47,19 @@ const DocumentRewriteCard = () => {
       </div>
 
       <div className='space-y-3 max-w-full min-[1080px]:max-w-[533px] w-full min-[1080px]:w-auto z-10'>
+        <p className='text-brand-blue font-bold tracking-wider text-sm uppercase'>
+          Seamless Workflow
+        </p>
         <h1 className='text-2xl min-[1080px]:text-[36px] font-bold text-heading'>
-          Rewrite an Entire Document
+          Rewrite instantly with a shortcut
         </h1>
         <p className='text-paragraph text-base min-[1080px]:text-[20px] font-normal'>
-          Our Paragraph Rewriter is designed to handle up to 125 words per
-          paragraph. Simply upload your file or paste the content in the
-          provided input box.
+          Select any text in your browser, press the ⌘ + R shortcut, and let our
+          AI enhance your writing right where you are.
         </p>
         <p className='text-paragraph text-base min-[1080px]:text-[20px] font-normal'>
-          At the click of a button, you can alter the whole paragraph to your
-          preference.
+          No need to switch tabs or open a new window. Unlock powerful AI
+          writing tools in seconds!
         </p>
       </div>
     </div>
