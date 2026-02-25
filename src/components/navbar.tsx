@@ -89,7 +89,7 @@ export function Navbar({ session, hideNavigation }: NavbarProps) {
               alt='Logo'
               width={180}
               height={100}
-              className='max-w-[140px] md:max-w-[180px]'
+              className='max-w-[110px] md:max-w-[120px]'
             />
           </Link>
         </div>

@@ -9,14 +9,14 @@ import { useAuth } from '@/hooks/use-auth';
 export function EmailVerification() {
   const { sendVerificationEmail } = useAuth();
 
-  const [timeToNextResend, setTimeToNextResend] = useState(30);
+  const [timeToNextResend, setTimeToNextResend] = useState(10);
   const interval = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     startEmailVerificationCountdown();
   }, []);
 
-  function startEmailVerificationCountdown(time = 30) {
+  function startEmailVerificationCountdown(time = 10) {
     setTimeToNextResend(time);
 
     clearInterval(interval.current);

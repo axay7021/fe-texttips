@@ -108,7 +108,7 @@ export function PlanTab({ subscription, onClose: _onClose }: PlanTabProps) {
       </div>
 
       {/* Billing History Section */}
-      <div className='pt-2'>
+      {/* <div className='pt-2'>
         <h4 className='font-semibold text-gray-900 mb-4 flex items-center gap-2'>
           <History className='w-4 h-4' /> Billing History
         </h4>
@@ -151,7 +151,7 @@ export function PlanTab({ subscription, onClose: _onClose }: PlanTabProps) {
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
 
       {/* Features List (Optional, can keep or remove if too cluttered) */}
       {/* ... */}
