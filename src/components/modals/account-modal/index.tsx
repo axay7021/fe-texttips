@@ -87,7 +87,7 @@ export function AccountModal({
               <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
               {/* Main Content */}
-              <div className='flex-1 flex flex-col relative w-full min-w-0 bg-white'>
+              <div className='flex-1 flex flex-col relative w-full min-w-0 min-h-0 bg-white'>
                 {/* Scrollable Area */}
                 <div className='flex-1 overflow-y-auto p-6 sm:p-10'>
                   <div className='max-w-2xl mx-auto mt-4 sm:mt-0'>
