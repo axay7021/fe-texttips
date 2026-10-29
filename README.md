@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TextTips — Full-stack AI Writing Assistant
 
-## Getting Started
+Despite the `fe-` repository name, this is a **full-stack Next.js application**. A separate backend repository is not required.
 
-First, run the development server:
+## What is implemented
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Writing interface with six tones: Professional, Friendly, Concise, Polished, Clear and Confident.
+- Server-side AI integration in `src/app/api/enhance/route.ts` and `src/lib/ai/provider.ts`.
+- Better Auth authentication, MongoDB persistence, usage tracking and subscription records.
+- Payment order and verification routes for Razorpay, alongside Stripe integration code.
+
+```mermaid
+flowchart LR
+  UI[Next.js UI] --> Routes[Next.js API routes]
+  Routes --> AI[AI SDK / configured provider]
+  Routes --> DB[(MongoDB)]
+  Routes --> Auth[Better Auth]
+  Routes --> Payments[Payments]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Credential-free portfolio walkthrough
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+node scripts/serve-portfolio.mjs
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open `http://127.0.0.1:4175`. Choose a curated writing example, switch between six tones and copy a rewrite. This is explicitly a **curated walkthrough**, not a live AI service. No account, payment or model key is required. Static files are in `public/portfolio`.
 
-## Learn More
+![Portfolio walkthrough](docs/portfolio-preview.png)
 
-To learn more about Next.js, take a look at the following resources:
+## Full application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use Node.js 20+ and pnpm 10+.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sh
+pnpm install
+cp .env.example .env
+pnpm dev
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Configure MongoDB, a strong Better Auth secret, and the AI provider. The existing enhance route currently checks `GEMINI_API_KEY` even when another provider is selected; configure Gemini for the unchanged flow. Authentication, email and billing need their corresponding credentials when used. See `src/config/index.ts` for the full environment configuration. Deployment workflows are manual and require your own runner setup.

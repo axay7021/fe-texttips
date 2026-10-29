@@ -9,7 +9,8 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "echo \"No tests specified. Skipping...\" && exit 0",
-    "prepare": "husky"
+    "prepare": "husky",
+    "demo": "node scripts/serve-portfolio.mjs"
   },
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [

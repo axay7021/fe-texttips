@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Explore six writing tones in a curated TextTips portfolio walkthrough."
+    />
+    <title>TextTips | Six-tone writing walkthrough</title>
+    <link rel="stylesheet" href="./demo.css" />
+    <script src="./demo.js" type="module"></script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="./index.html">texttips / writing studio</a
+      ><span class="tag">Akshay Dobariya / Engineering portfolio</span
+      ><span class="badge" id="mode">Interactive portfolio demo</span>
+    </header>
+    <section class="hero">
+      <span class="kicker">AI writing assistant / 02</span>
+      <h1>One thought.<br />Six ways to say it.</h1>
+      <p>
+        A guided look at TextTips: rewriting, tone selection and streaming AI
+        responses. This walkthrough uses curated examples; the full Next.js
+        application includes its own API, authentication, usage tracking and
+        payments.
+      </p>
+    </section>
+    <main class="workspace two-col">
+      <section class="panel">
+        <h2>Start with an idea</h2>
+        <label
+          >Choose an example<select id="example">
+            <option value="email">A project update</option>
+            <option value="request">A meeting request</option>
+          </select></label
+        >
+        <h3>Original text</h3>
+        <div class="result" id="original"></div>
+        <p class="muted">
+          Curated sample walkthrough · no AI requests or account required.
+        </p>
+        <div class="pipeline">
+          <span>Next.js interface</span><span>/api/enhance</span
+          ><span>AI SDK</span><span>Six tone variants</span>
+        </div>
+        <p class="muted">
+          The actual application generates rewrites from your input. Its
+          server-side routes also handle Better Auth, MongoDB usage limits,
+          subscriptions and payment verification.
+        </p>
+      </section>
+      <section class="panel">
+        <h2>Find the right tone</h2>
+        <div
+          id="tones"
+          class="suggestions"
+          role="group"
+          aria-label="Writing tone"
+        ></div>
+        <h3 id="tone-title"></h3>
+        <div class="result" id="rewrite" aria-live="polite"></div>
+        <div class="row" style="margin-top: 20px">
+          <button class="primary" id="copy">Copy rewrite</button
+          ><span class="status" id="copy-status" role="status"></span>
+        </div>
+      </section>
+    </main>
+    <footer class="foot">
+      <a href="https://github.com/axay7021/fe-texttips"
+        >Explore full-stack source ↗</a
+      ><span>Next.js · AI SDK · MongoDB · Better Auth</span>
+    </footer>
+  </body>
+</html>
