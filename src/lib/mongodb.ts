@@ -11,10 +11,6 @@ declare global {
 
 const MONGODB_URI = config.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define MONGODB_URI in env variables');
-}
-
 let cached = global.mongooseCache;
 
 if (!cached) {
@@ -22,6 +18,7 @@ if (!cached) {
 }
 
 async function dbConnect() {
+  if (!MONGODB_URI) throw new Error('Database is not configured yet');
   if (cached.conn) {
     return cached.conn;
   }

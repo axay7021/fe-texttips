@@ -6,16 +6,16 @@ import { nextCookies } from 'better-auth/next-js';
 import { MongoClient } from 'mongodb';
 import config from '@/config';
 
-const client = new MongoClient(
-  config.MONGODB_URI || 'mongodb://localhost:27017/better-auth-db',
-);
-const db = client.db();
+const client = config.MONGODB_URI ? new MongoClient(config.MONGODB_URI) : null;
+const db = client?.db();
 
 // import { STRIPE_PLANS, stripeClient } from '@/lib/stripe';
 import { sendEmailVerificationEmail, sendPasswordResetEmail } from '../email';
 
 export const auth = betterAuth({
   appName: 'TextTips',
+  secret: config.BETTER_AUTH_SECRET,
+  baseURL: config.BETTER_AUTH_URL,
   user: {
     modelName: 'users',
   },
@@ -67,10 +67,7 @@ export const auth = betterAuth({
     // }),
   ],
 
-  database: mongodbAdapter(db, {
-    client,
-    transaction: false,
-  }),
+  database: db && client ? mongodbAdapter(db, { client, transaction: false }) : undefined,
 
   // databaseHooks: {
   //   user: {

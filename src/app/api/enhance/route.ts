@@ -1,4 +1,3 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { headers } from 'next/headers';
 import config from '@/config';
@@ -9,13 +8,14 @@ import DailyUsage from '@/models/daily-usage.model';
 import Subscription from '@/models/subscription.model';
 
 export async function POST(req: Request) {
-  await dbConnect();
-
-  const _google = createGoogleGenerativeAI({
-    apiKey: config.GEMINI_API_KEY,
-  });
+  const provider = process.env.AI_PROVIDER || 'google';
+  const key = provider === 'openai' ? config.OPENAI_API_KEY
+    : provider === 'anthropic' ? config.ANTHROPIC_API_KEY : config.GEMINI_API_KEY;
+  if (!key) return Response.json({ error: 'AI service is not configured yet.', code: 'AI_NOT_CONFIGURED' }, { status: 503 });
+  if (!config.MONGODB_URI) return Response.json({ error: 'Database is not configured yet.', code: 'DATABASE_NOT_CONFIGURED' }, { status: 503 });
 
   try {
+    await dbConnect();
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -118,14 +118,7 @@ export async function POST(req: Request) {
     console.log('Enhance API Request Body:', body);
 
     // Check if key is present to avoid silent failures
-    if (!config.GEMINI_API_KEY) {
-      // biome-ignore lint/suspicious/noConsole: Allow logging
-      console.error('GEMINI_API_KEY is missing in process.env');
-      return new Response(
-        'Missing Google API Key. Please add GEMINI_API_KEY to your .env file.',
-        { status: 500 },
-      );
-    }
+
 
     const { prompt, text } = body;
     const userPrompt = prompt || text;
