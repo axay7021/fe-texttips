@@ -1,12 +1,6 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import AboutSection from '@/components/about-section';
-import FaqSection from '@/components/faq-section';
-import FeatureSection from '@/components/feature-section';
-import Footer from '@/components/footer';
-import { HeroSection } from '@/components/hero-section';
-import { Navbar } from '@/components/navbar';
-import PricingSection from '@/components/pricing-section';
+import { WritingDesk } from '@/components/writing-desk';
 import { auth } from '@/lib/auth/auth';
 
 export default async function LandingPage() {
@@ -18,27 +12,14 @@ export default async function LandingPage() {
     redirect('/dashboard');
   }
 
+  const provider = process.env.AI_PROVIDER || 'google';
+  const providerKey =
+    provider === 'openai'
+      ? process.env.OPENAI_API_KEY
+      : provider === 'anthropic'
+        ? process.env.ANTHROPIC_API_KEY
+        : process.env.GEMINI_API_KEY;
   return (
-    <div
-      className='min-h-screen relative overflow-hidden'
-      style={{
-        background:
-          'linear-gradient(180deg,rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%)',
-      }}
-    >
-      {/* Navbar */}
-      <Navbar session={session} />
-
-      <main className='relative z-10'>
-        <HeroSection />
-        <AboutSection />
-        <PricingSection />
-        <FeatureSection />
-        <FaqSection />
-      </main>
-
-      {/* Footer */}
-      <Footer />
-    </div>
+    <WritingDesk ready={Boolean(providerKey && process.env.MONGODB_URI)} />
   );
 }
