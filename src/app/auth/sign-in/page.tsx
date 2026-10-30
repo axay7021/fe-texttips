@@ -10,9 +10,10 @@ import { FcGoogle } from 'react-icons/fc';
 import type { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
 import { SignInSchema } from '@/lib/zod';
+import { EmailVerification } from '../sign-up/EmailVerification';
 
 export default function SignInPage() {
-  const { signIn, signInWithSocial, loading, error } = useAuth();
+  const { signIn, signInWithSocial, loading, error, verifyEmail } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -26,6 +27,8 @@ export default function SignInPage() {
       password: '',
     },
   });
+
+  if (verifyEmail) return <EmailVerification email={verifyEmail} />;
 
   return (
     <div

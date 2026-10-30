@@ -35,20 +35,30 @@ export const auth = betterAuth({
   emailVerification: {
     autoSignInAfterVerification: true,
     sendOnSignUp: true,
+    sendOnSignIn: true,
+    expiresIn: 3600,
     async sendVerificationEmail({ user, url }) {
       await sendEmailVerificationEmail({ user, url });
     },
   },
   socialProviders: {
-    github: {
-      clientId: config.GITHUB_CLIENT_ID,
-      clientSecret: config.GITHUB_CLIENT_SECRET,
-    },
-    google: {
-      prompt: 'select_account',
-      clientId: config.GOOGLE_CLIENT_ID,
-      clientSecret: config.GOOGLE_CLIENT_SECRET,
-    },
+    ...(config.GITHUB_CLIENT_ID && config.GITHUB_CLIENT_SECRET
+      ? {
+          github: {
+            clientId: config.GITHUB_CLIENT_ID,
+            clientSecret: config.GITHUB_CLIENT_SECRET,
+          },
+        }
+      : {}),
+    ...(config.GOOGLE_CLIENT_ID && config.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            prompt: 'select_account',
+            clientId: config.GOOGLE_CLIENT_ID,
+            clientSecret: config.GOOGLE_CLIENT_SECRET,
+          },
+        }
+      : {}),
   },
 
   plugins: [
@@ -67,7 +77,10 @@ export const auth = betterAuth({
     // }),
   ],
 
-  database: db && client ? mongodbAdapter(db, { client, transaction: false }) : undefined,
+  database:
+    db && client
+      ? mongodbAdapter(db, { client, transaction: false })
+      : undefined,
 
   // databaseHooks: {
   //   user: {

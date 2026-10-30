@@ -29,12 +29,13 @@ export const useAuth = () => {
         email: values.email,
         password: values.password,
         name: values.name,
-        callbackURL: '/',
+        callbackURL: '/dashboard',
       },
       {
         onSuccess: () => {
           setVerifyEmail(values.email);
           setShowVerifyEmail(true);
+          setLoading(false);
         },
         onError: (ctx) => {
           setError(ctx.error.message);
@@ -52,14 +53,20 @@ export const useAuth = () => {
       {
         email: values.email,
         password: values.password,
-        callbackURL: '/',
+        callbackURL: '/dashboard',
       },
       {
         onSuccess: () => {
+          router.replace('/dashboard');
           router.refresh();
         },
         onError: (ctx) => {
-          setError(ctx.error.message);
+          if (ctx.error.code === 'EMAIL_NOT_VERIFIED') {
+            setVerifyEmail(values.email);
+            setShowVerifyEmail(true);
+          } else {
+            setError(ctx.error.message);
+          }
           setLoading(false);
         },
       },
@@ -138,11 +145,21 @@ export const useAuth = () => {
   const signInWithSocial = async (provider: 'google' | 'github') => {
     setLoading(true);
     setError(null);
-    await authClient.signIn.social({
-      provider,
-      callbackURL: '/',
-      errorCallbackURL: '/auth/sign-in',
-    });
+    try {
+      const response = await authClient.signIn.social({
+        provider,
+        callbackURL: '/dashboard',
+        errorCallbackURL: '/auth/sign-in',
+      });
+      if (response.error)
+        setError(
+          response.error.message || 'Social sign-in is not configured yet.',
+        );
+    } catch {
+      setError('Unable to start social sign-in. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -162,7 +179,7 @@ export const useAuth = () => {
   const sendVerificationEmail = async () => {
     return authClient.sendVerificationEmail({
       email: verifyEmail,
-      callbackURL: '/',
+      callbackURL: '/dashboard',
     });
   };
 

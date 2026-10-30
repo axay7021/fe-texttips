@@ -4,16 +4,15 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import BetterAuthActionButton from '@/components/auth/BetterAuthActionButton';
-import { useAuth } from '@/hooks/use-auth';
+import { authClient } from '@/lib/auth/auth-client';
 
-export function EmailVerification() {
-  const { sendVerificationEmail } = useAuth();
-
+export function EmailVerification({ email }: { email: string }) {
   const [timeToNextResend, setTimeToNextResend] = useState(10);
   const interval = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     startEmailVerificationCountdown();
+    return () => clearInterval(interval.current);
   }, []);
 
   function startEmailVerificationCountdown(time = 10) {
@@ -51,8 +50,8 @@ export function EmailVerification() {
         </h1>
 
         <p className='text-[#666] text-[15px] font-medium leading-relaxed mb-8'>
-          We sent a verification link to your email address. Please click the
-          link to verify your account and continue.
+          Check {email} for your verification link. Please click the link to
+          verify your account and continue.
         </p>
 
         <BetterAuthActionButton
@@ -62,7 +61,10 @@ export function EmailVerification() {
           disabled={timeToNextResend > 0}
           action={() => {
             startEmailVerificationCountdown();
-            return sendVerificationEmail();
+            return authClient.sendVerificationEmail({
+              email,
+              callbackURL: '/dashboard',
+            });
           }}
         >
           {timeToNextResend > 0

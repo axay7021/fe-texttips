@@ -34,7 +34,7 @@ export default function SignUpPage() {
   };
 
   if (verifyEmail) {
-    return <EmailVerification />;
+    return <EmailVerification email={verifyEmail} />;
   }
 
   return (
