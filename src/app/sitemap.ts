@@ -1,19 +1,11 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: 'https://text-tips.com',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 1,
-    },
-    {
-      url: 'https://text-tips.com/about',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // Add more routes here as your app grows
-  ];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://texttips.akshaydobariya.dev';
+  return ['', '/privacy-policy', '/terms-of-service'].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: route ? 0.5 : 1,
+  }));
 }

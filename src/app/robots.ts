@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://text-tips.com/sitemap.xml',
+    sitemap: 'https://texttips.akshaydobariya.dev/sitemap.xml',
   };
 }

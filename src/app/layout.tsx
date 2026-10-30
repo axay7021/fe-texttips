@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://text-tips.com',
+    url: 'https://texttips.akshaydobariya.dev',
     title: 'Text Tips | AI Text Enhancer',
     description:
       'Enhance your writing with Text Tips. Professional AI-powered text improvement for clarity, tone, and grammar.',
