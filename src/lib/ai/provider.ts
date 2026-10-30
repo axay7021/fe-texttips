@@ -40,7 +40,7 @@ export function getAIModel() {
         apiKey: config.GEMINI_API_KEY,
       });
 
-      return google('gemini-2.5-flash-lite');
+      return google(process.env.AI_MODEL || 'gemini-3.1-flash-lite');
     }
   }
 }
